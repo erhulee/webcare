@@ -1,0 +1,1 @@
+export {JSErrorPlugin} from "./javascript/index";

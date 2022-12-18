@@ -1,0 +1,1 @@
+export const RESOURCE_TIME_OUT = 5000;
