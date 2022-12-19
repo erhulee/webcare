@@ -1,8 +1,8 @@
 import { Monitor } from "../share/Monitor";
-import { JSErrorPlugin } from "./plugins/stability/javascript";
 // import FingerprintJS, { GetResult } from '@fingerprintjs/fingerprintjs'
 import { BeaconSender, Sender, XHRSender } from "./Sender";
 import {Plugin} from "share/Plugin"
+import { HTTPPlugin, JSErrorPlugin, ResourcePlugin } from "./plugins/stability/index";
 // const fpPromise = FingerprintJS.load()
 type WebSenderType = "xhr" | "beacon";
 type SenderMethod = "post" | "get"
@@ -54,7 +54,9 @@ class WebMonitor extends Monitor  {
 
     private initPlugins(){
         const plugins:Plugin[] = [
-            new JSErrorPlugin(this)
+            new JSErrorPlugin(this),
+            new HTTPPlugin(this),
+            new ResourcePlugin(this)
         ]
         this.plugins = plugins;
     }

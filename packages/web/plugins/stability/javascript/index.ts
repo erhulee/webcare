@@ -3,8 +3,8 @@
 // import { WebMonitor } from "../../../core";
 // import { createJSErrorLogger, createPromiseErrorLogger } from "../logger/jserrorLogger";
 
-import WebMonitor from "web";
-import { createJSErrorLogger } from "../../logger";
+import WebMonitor from "web/WebMonitor";
+import { createJSErrorLogger } from "../../logger/index";
 import {Plugin} from "share/Plugin"
 
 export class JSErrorPlugin implements Plugin{

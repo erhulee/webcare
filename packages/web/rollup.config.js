@@ -13,7 +13,7 @@ export default {
         plugins: [
             alias({
                 entries: [
-                    { find: "web", replacement: "./"},
+                    { find: "web",   replacement: "./"},
                     { find: "share", replacement:"../share"}
                 ]
             }),
