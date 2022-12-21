@@ -1,21 +1,21 @@
 import { Monitor } from "../share/Monitor";
-// import FingerprintJS, { GetResult } from '@fingerprintjs/fingerprintjs'
+import FingerprintJS, { GetResult } from '@fingerprintjs/fingerprintjs'
 import { BeaconSender, Sender, XHRSender } from "./Sender";
 import {Plugin} from "share/Plugin"
 import { HTTPPlugin, JSErrorPlugin, ResourcePlugin } from "./plugins/stability/index";
-import { LongTimeTaskPlugin } from "./plugins/performance/index";
-// const fpPromise = FingerprintJS.load()
+import { LongTimeTaskPlugin, WebVitalsPlugin } from "./plugins/performance/index";
+const fpPromise = FingerprintJS.load()
 type WebSenderType = "xhr" | "beacon";
 type SenderMethod = "post" | "get"
 class WebMonitor extends Monitor  {
     fingerprint: string;
     senderInstance?: Sender<WebMonitor>;
     plugins: Plugin[]
-    // private async setFingerPrint(){
-    //     const fp = await fpPromise;
-    //     const result = await fp.get();
-    //     this.fingerprint = result.visitorId;
-    // }
+    private async setFingerPrint(){
+        const fp = await fpPromise;
+        const result = await fp.get();
+        this.fingerprint = result.visitorId;
+    }
     constructor(
         appid:string, 
         endpoint: string, 
@@ -26,7 +26,7 @@ class WebMonitor extends Monitor  {
         super(appid, endpoint, method);
         this.fingerprint = "unknown"
         this.plugins = [];
-        // this.setFingerPrint();
+        this.setFingerPrint();
         this.initSender(senderType, method, endpoint, threshold);
         this.initPlugins();
     }
@@ -58,7 +58,8 @@ class WebMonitor extends Monitor  {
             new JSErrorPlugin(this),
             new HTTPPlugin(this),
             new ResourcePlugin(this),
-            new LongTimeTaskPlugin(this)
+            new LongTimeTaskPlugin(this),
+            new WebVitalsPlugin(this)
         ]
         this.plugins = plugins;
     }

@@ -1,6 +1,13 @@
 type LoggerCategory = "stability" | "behavior" | "performance"
 type StabilityType  = "HTTP" | "WebSocket" | "Collapse" | "Resource" | "JS" 
-type PerformanceType = "LongTimeTask"
+type PerformanceType = "LongTimeTask" | "WebVitals"
+export type WebVital = {
+    "CLS": string | number
+    "FID": string | number
+    "LCP": string | number
+    "FCP": string | number
+    "TTFB": string | number
+}
 export enum ResourceType {
     "Image",
     "CSS",
@@ -60,5 +67,14 @@ export class LongTaskLogger implements Logger{
         this.duration = duration;
         this.eventType = eventType;
         this.eventName = eventName
+    }
+}
+
+export class WebVitalsLogger implements Logger{
+    category: "performance" = "performance"
+    type: "WebVitals" = "WebVitals"
+    webvitals: WebVital
+    constructor(webvitals: WebVital){
+        this.webvitals = webvitals
     }
 }
