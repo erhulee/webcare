@@ -1,5 +1,6 @@
 type LoggerCategory = "stability" | "behavior" | "performance"
 type StabilityType  = "HTTP" | "WebSocket" | "Collapse" | "Resource" | "JS" 
+type PerformanceType = "LongTimeTask"
 export enum ResourceType {
     "Image",
     "CSS",
@@ -10,7 +11,7 @@ export enum ResourceType {
 }
 interface Logger {
     category: LoggerCategory
-    type: StabilityType
+    type: StabilityType | PerformanceType
 }
 
 export class JSErrorLogger implements Logger{
@@ -47,3 +48,17 @@ export class ResourceLogger implements Logger{
     }
 }
 
+export class LongTaskLogger implements Logger{
+    category: "performance" = "performance"
+    type: "LongTimeTask" = "LongTimeTask"
+    startTime:  number
+    duration:   number
+    eventType:  string
+    eventName:  string
+    constructor(startTime: number, duration:number, eventType:string, eventName:string){
+        this.startTime = startTime;
+        this.duration = duration;
+        this.eventType = eventType;
+        this.eventName = eventName
+    }
+}

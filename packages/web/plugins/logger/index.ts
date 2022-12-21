@@ -1,5 +1,5 @@
 import WebMonitor from "web/WebMonitor";
-import { HTTPErrorLogger, JSErrorLogger, ResourceLogger, ResourceType } from "./type";
+import { HTTPErrorLogger, JSErrorLogger, LongTaskLogger, ResourceLogger, ResourceType } from "./type";
 
 // 负责环境变量和指纹的注入
 function createBaseLogger(monitor: WebMonitor) {
@@ -57,5 +57,13 @@ export function createResourceLogger(monitor: WebMonitor, type: ResourceType, ur
     return {
         ...env,
         ...new ResourceLogger(type, url)
+    }
+}
+
+export function createLongTaskLogger(monitor: WebMonitor, entry:PerformanceEntry) {
+    const env = createBaseLogger(monitor);
+    return {
+        ...env,
+        ...new LongTaskLogger(entry.startTime, entry.duration, entry.name, entry.entryType)
     }
 }

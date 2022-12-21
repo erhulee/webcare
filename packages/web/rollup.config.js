@@ -1,5 +1,5 @@
 import typescript from "rollup-plugin-typescript2"
-// import {terser} from "rollup-plugin-terser"
+import {terser} from "rollup-plugin-terser"
 import babel from "rollup-plugin-babel"
 import alias from "@rollup/plugin-alias"
 export default {
@@ -22,7 +22,7 @@ export default {
             }),
             babel({
                 exclude: "node_modules/**"
-            })
-            // terser()
+            }),
+            terser()
         ]
     }
