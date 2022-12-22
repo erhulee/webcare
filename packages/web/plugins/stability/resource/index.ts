@@ -29,6 +29,7 @@ export class ResourcePlugin implements Plugin{
         const listener = function(e:any){
             const typeName = e.target.localName;
             const url = e.target.src
+            if(!(typeName && url)) return;
             let logger = createResourceLogger( that.instance, tagName2ResourceType[typeName], url)
             that.instance.senderInstance?.post(logger)
         }

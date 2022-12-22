@@ -1,5 +1,5 @@
 import WebMonitor from "web/WebMonitor";
-import { HTTPErrorLogger, JSErrorLogger, LongTaskLogger, ResourceLogger, ResourceType, WebVital, WebVitalsLogger } from "./type";
+import { CrashLogger, HTTPErrorLogger, JSErrorLogger, LongTaskLogger, ResourceLogger, ResourceType, WebVital, WebVitalsLogger } from "./type";
 
 // 负责环境变量和指纹的注入
 function createBaseLogger(monitor: WebMonitor) {
@@ -73,5 +73,13 @@ export function createWebVitalLogger(monitor: WebMonitor, webvital:WebVital) {
     return {
         ...env,
         ...new WebVitalsLogger(webvital)
+    }
+}
+
+export function createCrashLogger(monitor: WebMonitor) {
+    const env = createBaseLogger(monitor);
+    return {
+        ...env,
+        ...new CrashLogger()
     }
 }

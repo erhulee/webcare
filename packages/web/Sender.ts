@@ -1,4 +1,3 @@
-import { resolve } from "path/posix";
 import { Monitor } from "../share/Monitor";
 import { isStatusOk } from "./util";
 import WebMonitor from "./WebMonitor";
@@ -50,7 +49,6 @@ class XHRSender<Report> implements Sender<WebMonitor>{
             const xhr = new XMLHttpRequest();
             xhr.open(that.method, that.endpoint);
             xhr.setRequestHeader("Content-Type", 'application/json');
-
             xhr.send(JSON.stringify(data));
             xhr.addEventListener("readystatechange", function (){
                 if(this.readyState == 4){
@@ -71,6 +69,7 @@ class XHRSender<Report> implements Sender<WebMonitor>{
     }
 
     post(data: Report):Promise<any>{
+        console.log(data)
         this.cache.push(data);
         if(this.cache.length < this.threshold){
             localStorage.setItem(KEY, JSON.stringify(this.cache))

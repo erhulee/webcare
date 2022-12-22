@@ -24,6 +24,7 @@ export class JSErrorPlugin implements Plugin{
             this.hasError = true;
         }
         this.promise_listener = (e:ErrorEvent)=>{
+            console.log("eee:", e)
             if((e as any).target.localname !== undefined) return;
             const log = createJSErrorLogger(instance, e.message, e.error?.stack)
             sender?.post(log);
@@ -34,7 +35,6 @@ export class JSErrorPlugin implements Plugin{
 
     }
     run(){
-        console.log("开始监听")
         window.addEventListener("error", this.error_listener)
         window.addEventListener("unhandledrejection", this.promise_listener)
     }

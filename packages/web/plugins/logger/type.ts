@@ -55,6 +55,12 @@ export class ResourceLogger implements Logger{
     }
 }
 
+export class CrashLogger implements Logger{
+    category: "stability" = "stability"
+    type: "Collapse" = "Collapse"
+    constructor(){}
+}
+
 export class LongTaskLogger implements Logger{
     category: "performance" = "performance"
     type: "LongTimeTask" = "LongTimeTask"
@@ -78,3 +84,4 @@ export class WebVitalsLogger implements Logger{
         this.webvitals = webvitals
     }
 }
+

@@ -38,9 +38,11 @@ export class HTTPPlugin implements Plugin {
         /* fetch 劫持 */
         if(!window.fetch) return;
         this.nativeFetch = fetch
+        window._fetch = window.fetch
         window.fetch = function(...arg){
-            const promise = instance.nativeFetch(...arg);
+            const promise = (window as any)._fetch(...arg);
             promise.then((response:Response)=>{
+                console.log("res:", response)
                 if(response.ok){
                     //TODO 观察怎么拿到需要的信息
                     const logger = createHTTPLogger(instance.instance, response, "Fetch");
