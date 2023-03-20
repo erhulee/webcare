@@ -1,16 +1,16 @@
 import { Monitor } from "../share/Monitor";
 import FingerprintJS, { GetResult } from '@fingerprintjs/fingerprintjs'
-import { BeaconSender, Sender, XHRSender } from "./Sender";
+import { BeaconSender, XHRSender } from "./Sender";
 import {Plugin} from "share/Plugin"
 import { CrashPlugin, HTTPPlugin, JSErrorPlugin, ResourcePlugin } from "./plugins/stability/index";
 import { LongTimeTaskPlugin, WebVitalsPlugin } from "./plugins/performance/index";
+import { Sender } from "../share/Sender";
 const fpPromise = FingerprintJS.load()
 type WebSenderType = "xhr" | "beacon";
 type SenderMethod = "post" | "get"
 class WebMonitor extends Monitor  {
     fingerprint: string;
     senderInstance?: Sender<WebMonitor>;
-    plugins: Plugin[]
     private async setFingerPrint(){
         const fp = await fpPromise;
         const result = await fp.get();
@@ -20,7 +20,7 @@ class WebMonitor extends Monitor  {
         appid:string, 
         endpoint: string, 
         method: "get" | "post", 
-        senderType:WebSenderType = "xhr",
+        senderType: WebSenderType = "xhr",
         threshold: number = 1
         ){
         super(appid, endpoint, method);
@@ -49,7 +49,7 @@ class WebMonitor extends Monitor  {
         if(_type == "beacon"){
             this.senderInstance = new BeaconSender(endpoint, this);
         }else{
-            this.senderInstance = new XHRSender(endpoint, this, senderMethod, threshold)
+            this.senderInstance = new XHRSender<(any & {appid: string})>(endpoint, this, senderMethod, threshold)
         }
     }
 

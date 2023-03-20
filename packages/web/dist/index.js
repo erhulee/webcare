@@ -2740,11 +2740,15 @@ class XHRSender {
     _post() {
         const that = this;
         const data = this.cache;
+        const body = {
+            appid: this.instance.appid,
+            logger: data
+        };
         const promise = new Promise((resolve, reject) => {
             const xhr = new XMLHttpRequest();
             xhr.open(that.method, that.endpoint);
             xhr.setRequestHeader("Content-Type", 'application/json');
-            xhr.send(JSON.stringify(data));
+            xhr.send(JSON.stringify(body));
             xhr.addEventListener("readystatechange", function () {
                 if (this.readyState == 4) {
                     if (isStatusOk(this.status)) {
@@ -2764,7 +2768,6 @@ class XHRSender {
         return promise;
     }
     post(data) {
-        console.log(data);
         this.cache.push(data);
         if (this.cache.length < this.threshold) {
             localStorage.setItem(KEY, JSON.stringify(this.cache));
@@ -2807,6 +2810,12 @@ class ResourceLogger {
         this.type = "Resource";
         this.resourceType = resourceType;
         this.src = src;
+    }
+}
+class CrashLogger {
+    constructor() {
+        this.category = "stability";
+        this.type = "Collapse";
     }
 }
 class LongTaskLogger {
@@ -2870,6 +2879,10 @@ function createLongTaskLogger(monitor, entry) {
 function createWebVitalLogger(monitor, webvital) {
     const env = createBaseLogger(monitor);
     return Object.assign(Object.assign({}, env), new WebVitalsLogger(webvital));
+}
+function createCrashLogger(monitor) {
+    const env = createBaseLogger(monitor);
+    return Object.assign(Object.assign({}, env), new CrashLogger());
 }
 
 // import { Plugin } from "../../../../core/plugin";
@@ -3003,6 +3016,104 @@ class ResourcePlugin {
     ;
 }
 
+const work_source = `
+const msgQueue = [];
+// 崩溃只上报一次
+let   isPost   = false;
+
+// 把日志先生成发进来
+let   loggerBased = {};
+let   endpoint = "";
+let   method   = "";
+
+
+function post(){
+    loggerBased.path = location.protocol + '//' + location.hostname + (location.port ? ':' + location.port : '') + location.pathname + location.search;
+    if(method == "get" || method == "GET"){
+        const params = new URLSearchParams();
+        const keys = Object.keys(loggerBased);
+        keys.forEach(key=>{
+            params.append(key, JSON.stringify(loggerBased[key]));
+        })
+        fetch(endpoint+"?"+params, {
+            method: method,
+        }).then(()=>{
+            isPost = true;
+        })
+    }else{
+        fetch(endpoint, {
+            method: method,
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(loggerBased)
+        }).then(()=>{
+            isPost = true;
+        })
+    }
+}
+function init(logger, _endpoint, _method){
+    console.log(logger)
+    loggerBased = logger;
+    endpoint    = _endpoint;
+    method      = _method;
+}
+
+self.onmessage = function(e){
+    const data = e.data;
+    const type = data.type;
+    switch(type){
+        case "init":
+            init(data.logger, data.endpoint, data.method);
+            break;
+        default:
+            msgQueue.pop();
+    }
+    
+}
+
+setInterval(()=>{
+    if(msgQueue.length >= 1 && !isPost){
+        post();
+    }else {
+        const queItem = "Web_Monitor_Test"
+        postMessage(queItem);
+        msgQueue.push(queItem);
+    }
+}, 5000);
+
+`;
+
+class CrashPlugin {
+    constructor(instance) {
+        this.instance = instance;
+        this.worker = null;
+    }
+    init() {
+    }
+    run() {
+        // const worker = new Worker("webwork.js");
+        const content = new Blob([work_source]);
+        const worker = new Worker(URL.createObjectURL(content));
+        this.worker = worker;
+        worker.postMessage({
+            type: "init",
+            endpoint: this.instance.endpoint,
+            method: this.instance.method,
+            logger: createCrashLogger(this.instance)
+        });
+        worker.addEventListener("message", (message) => {
+            const data = message.data;
+            worker.postMessage(data);
+        });
+    }
+    unload() {
+        if (this.worker) {
+            this.worker.terminate();
+        }
+    }
+}
+
 const MAX_DURATION = 100;
 
 class LongTimeTaskPlugin {
@@ -3041,6 +3152,7 @@ class WebVitalsPlugin {
         return Promise.all(methods.map((method, index) => {
             return new Promise((resolve, reject) => {
                 method((value) => {
+                    console.log("还在收集:", value);
                     const key = names[index];
                     this.performance[key] = value;
                     resolve(value);
@@ -3052,6 +3164,7 @@ class WebVitalsPlugin {
         var _a;
         return __awaiter(this, void 0, void 0, function* () {
             yield this.collectValue([C, F, G, L, K], ["CLS", "FID", "LCP", "FCP", "TTFB"]);
+            console.log("收集完毕:", this.performance);
             (_a = this.instance.senderInstance) === null || _a === void 0 ? void 0 : _a.post(createWebVitalLogger(this.instance, this.performance));
         });
     }
@@ -3102,13 +3215,18 @@ class WebMonitor extends Monitor {
             new HTTPPlugin(this),
             new ResourcePlugin(this),
             new LongTimeTaskPlugin(this),
-            new WebVitalsPlugin(this)
+            new WebVitalsPlugin(this),
+            new CrashPlugin(this)
         ];
         this.plugins = plugins;
     }
     start() {
-        this.plugins.forEach(plugin => {
-            plugin.run();
+        return __awaiter(this, void 0, void 0, function* () {
+            const fp = yield fpPromise;
+            yield fp.get();
+            this.plugins.forEach(plugin => {
+                plugin.run();
+            });
         });
     }
 }

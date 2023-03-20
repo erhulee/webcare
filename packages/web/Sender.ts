@@ -1,13 +1,8 @@
 import { Monitor } from "../share/Monitor";
 import { isStatusOk } from "./util";
 import WebMonitor from "./WebMonitor";
+import {Sender} from "../share/Sender"
 
-export interface Sender<T>{
-    endpoint: string,
-    instance: T;
-
-    post(data:any):void;
-}
 const KEY = "__Web_Monitor_List__"
 class BeaconSender<Report> implements Sender<WebMonitor>{
     endpoint: string;
@@ -22,7 +17,7 @@ class BeaconSender<Report> implements Sender<WebMonitor>{
     }
 }
 
-class XHRSender<Report> implements Sender<WebMonitor>{
+class XHRSender<Report extends {appid: string}> implements Sender<WebMonitor>{
     endpoint: string;
     instance: WebMonitor;
     method: "post" | "get";
@@ -45,11 +40,15 @@ class XHRSender<Report> implements Sender<WebMonitor>{
     private _post(): Promise<any> {
         const that = this; 
         const data = this.cache;
+        const body = {
+            appid: this.instance.appid,
+            logger: data
+        }
         const promise = new Promise((resolve, reject)=>{
             const xhr = new XMLHttpRequest();
             xhr.open(that.method, that.endpoint);
             xhr.setRequestHeader("Content-Type", 'application/json');
-            xhr.send(JSON.stringify(data));
+            xhr.send(JSON.stringify(body));
             xhr.addEventListener("readystatechange", function (){
                 if(this.readyState == 4){
                     if(isStatusOk(this.status)){
@@ -69,7 +68,6 @@ class XHRSender<Report> implements Sender<WebMonitor>{
     }
 
     post(data: Report):Promise<any>{
-        console.log(data)
         this.cache.push(data);
         if(this.cache.length < this.threshold){
             localStorage.setItem(KEY, JSON.stringify(this.cache))

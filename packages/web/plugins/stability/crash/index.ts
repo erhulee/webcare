@@ -1,6 +1,6 @@
 import WebMonitor  from "web/WebMonitor"
 import {Plugin} from "share/Plugin"
-import { createCrashLogger } from "web/plugins/logger"
+import { createCrashLogger } from "../../logger/index"
 import { work_source } from "./webwork"
 
 export class CrashPlugin implements Plugin {

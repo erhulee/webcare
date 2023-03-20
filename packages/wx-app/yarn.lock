@@ -1063,6 +1063,11 @@
   dependencies:
     "@types/node" "*"
 
+"@types/wechat-miniprogram@^3.4.1":
+  version "3.4.1"
+  resolved "https://registry.npmmirror.com/@types/wechat-miniprogram/-/wechat-miniprogram-3.4.1.tgz#e237ebaa5f541b816ca2ab648e40b74faeb014cb"
+  integrity sha512-szbuYR32VotxNQNQ4YyQ6Ob3ya0tLY0zpf/xvi6DF8Oqb+0Y+5CL5BpxS+4wBSJvlu3VfSXhjxZ0ze1a3l16Pw==
+
 acorn-jsx@^5.3.2:
   version "5.3.2"
   resolved "https://registry.npmmirror.com/acorn-jsx/-/acorn-jsx-5.3.2.tgz#7ed5bb55908b3b2f1bc55c6af1653bada7f07937"
