@@ -3,6 +3,13 @@ import {terser} from "rollup-plugin-terser"
 import babel from "rollup-plugin-babel"
 import alias from "@rollup/plugin-alias"
 import npm from "rollup-plugin-node-resolve"
+import path from "path"
+import { fileURLToPath } from 'url'
+
+const __filenameNew = fileURLToPath(import.meta.url)
+
+const __dirnameNew = path.dirname(__filenameNew)
+console.log(path.resolve(__dirnameNew))
 export default {
         input: 'index.ts',
         output: [
@@ -13,9 +20,10 @@ export default {
         ],
         plugins: [
             alias({
+                resolve: ['.tsx', '.ts'],
                 entries: [
-                    { find: "web",   replacement: "./"},
-                    { find: "share", replacement:"../share"}
+                    { find: "web",   replacement:  path.resolve(__dirnameNew, "./")},
+                    { find: "share", replacement:  "../share"},
                 ]
             }),
             npm(),

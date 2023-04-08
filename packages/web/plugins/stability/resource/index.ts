@@ -1,8 +1,8 @@
 
 import WebMonitor from "web/WebMonitor";
 import { Plugin } from "share/Plugin"
-import { ResourceType } from "../../logger/type";
-import { ResourceErrorLogger, ResourcePerformanceLogger } from "web/plugins/logger/factory";
+import { ResourceType } from "../../../logger/type";
+import { ResourceErrorLogger, ResourcePerformanceLogger } from "web/logger";
 function analyzeLinkType(attribute: { rel?: string, type?: string, href?: string, as?: string }) {
     function isCSS(): boolean {
         const { rel, type, href, as } = attribute;
@@ -33,7 +33,7 @@ const tagName2ResourceType: { [key: string]: ResourceType } = {
     img: ResourceType.Image,
     video: ResourceType.Video,
     audio: ResourceType.Audio,
-    unknown: ResourceType.
+    unknown: ResourceType.Unknown
 }
 export class ResourcePlugin implements Plugin {
     monitor: WebMonitor
@@ -90,7 +90,6 @@ export class ResourcePlugin implements Plugin {
                     logger = new ResourceErrorLogger(tagName2ResourceType[tag], url);
                 }
 
-                that.monitor.send(logger)
             }
             this.listener = listener;
             window.addEventListener("error", listener, true)

@@ -45,12 +45,12 @@ export class LongTaskLogger implements Logger {
     }
 }
 
-export class WebVitalsLogger implements Logger {
-    category: "performance" = "performance"
-    type: "WebVitals" = "WebVitals"
+// export class WebVitalsLogger implements Logger {
+//     category: "performance" = "performance"
+//     type: "WebVitals" = "WebVitals"
 
-    // webvitals: WebVital
-    constructor() {
-        // this.webvitals = webvitals
-    }
-}
+//     // webvitals: WebVital
+//     constructor() {
+//         // this.webvitals = webvitals
+//     }
+// }

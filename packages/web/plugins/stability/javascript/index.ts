@@ -1,6 +1,6 @@
 import WebMonitor from "web/WebMonitor";
 import { Plugin } from "share/Plugin"
-import { JSErrorLogger, PromiseErrorLogger } from "web/plugins/logger/factory";
+import { JSErrorLogger, PromiseErrorLogger } from "web/logger";
 
 export class JSErrorPlugin implements Plugin {
     monitor: WebMonitor;

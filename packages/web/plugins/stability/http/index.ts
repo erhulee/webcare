@@ -1,7 +1,7 @@
 import WebMonitor from "web/WebMonitor"
 import { Plugin } from "share/Plugin"
 import { isStatusOk } from "../../../util";
-import { HTTPPerformanceLogger, HTTPErrorLogger } from "web/plugins/logger/factory";
+import { HTTPPerformanceLogger, HTTPErrorLogger } from "web/logger/index";
 
 
 export class HTTPPlugin implements Plugin {
