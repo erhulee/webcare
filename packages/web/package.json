@@ -1,6 +1,6 @@
 {
   "name": "sniper-web",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "main": "dist/index.js",
   "license": "MIT",
   "type": "module",
@@ -30,5 +30,6 @@
   },
   "devDependencies": {
     "rollup-plugin-node-resolve": "^5.2.0"
-  }
+  },
+  "author": "erhulin"
 }
