@@ -7,9 +7,9 @@ import { LongTimeTaskPlugin, WebVitalsPlugin } from "./plugins/performance/index
 import { Sender } from "../share/Sender";
 import { EventsPlugin } from "./plugins/behavior/events";
 import { RrwebPlugin } from "./plugins/behavior/rrweb";
+const DEFAULT_LONGTASK_TIME = 50;
 type WebSenderType = "xhr" | "beacon";
 type SenderMethod = "post" | "get"
-
 type SenderOption = {
     threshold: number,
     endpoint: string
@@ -20,6 +20,7 @@ type SenderOption = {
     method: "get",
     senderType: "xhr"
 })
+
 async function getDid() {
     const fpPromise = FingerprintJS.load()
     const fp = await fpPromise;
@@ -28,6 +29,8 @@ async function getDid() {
 }
 
 class WebMonitor extends Monitor {
+    // 长任务阈值
+    longtask_time
     // did -> 浏览器指纹
     fingerprint: string = "unknown";
     // uid -> 运行时注入，存在 uid 为空的情况，
@@ -53,6 +56,7 @@ class WebMonitor extends Monitor {
 
     constructor(
         options: {
+            longtask_time?: number
             appid: string,
             endpoint: string,
             sample_rate?: number
@@ -60,7 +64,8 @@ class WebMonitor extends Monitor {
         } & SenderOption
     ) {
         super(options.appid, options.endpoint, options.method, options.sample_rate);
-        const { method, senderType, threshold = 1, endpoint } = options;
+        const { method, senderType, threshold = 1, endpoint, longtask_time = DEFAULT_LONGTASK_TIME } = options;
+        this.longtask_time = longtask_time
         getDid().then(did => this.fingerprint = did)
         this.initSender(senderType, method, endpoint, threshold);
         this.initPlugins(options.plugins);

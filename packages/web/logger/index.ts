@@ -1,5 +1,5 @@
 import WebMonitor from "web/WebMonitor";
-import { CrashLogger, LongTaskLogger, ResourceType, WebVital } from "./type";
+import { CrashLogger, ResourceType, WebVital } from "./type";
 
 // 负责环境变量和指纹的注入
 function createBaseLogger(monitor: WebMonitor) {
@@ -14,17 +14,6 @@ function createBaseLogger(monitor: WebMonitor) {
         fingerPrint
     }
 }
-
-
-
-export function createLongTaskLogger(monitor: WebMonitor, entry: PerformanceEntry) {
-    const env = createBaseLogger(monitor);
-    return {
-        ...env,
-        ...new LongTaskLogger(entry.startTime, entry.duration, entry.name, entry.entryType)
-    }
-}
-
 
 
 export function createCrashLogger(monitor: WebMonitor) {
@@ -164,5 +153,20 @@ export class WebVitalLogger extends PerformanceBaseLogger {
             ...this,
             ...webvital
         }
+    }
+}
+
+export class LongTaskLogger extends PerformanceBaseLogger {
+    type: "LongTimeTask" = "LongTimeTask"
+    startTime: number
+    duration: number
+    eventType: string
+    eventName: string
+    constructor(startTime: number, duration: number, eventType: string, eventName: string) {
+        super();
+        this.startTime = startTime;
+        this.duration = duration;
+        this.eventType = eventType;
+        this.eventName = eventName
     }
 }

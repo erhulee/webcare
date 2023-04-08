@@ -2813,14 +2813,14 @@ class LongTaskLogger {
         this.eventName = eventName;
     }
 }
-class WebVitalsLogger {
-    // webvitals: WebVital
-    constructor() {
-        this.category = "performance";
-        this.type = "WebVitals";
-        // this.webvitals = webvitals
-    }
-}
+// export class WebVitalsLogger implements Logger {
+//     category: "performance" = "performance"
+//     type: "WebVitals" = "WebVitals"
+//     // webvitals: WebVital
+//     constructor() {
+//         // this.webvitals = webvitals
+//     }
+// }
 
 // 负责环境变量和指纹的注入
 function createBaseLogger(monitor) {
@@ -2838,10 +2838,6 @@ function createBaseLogger(monitor) {
 function createLongTaskLogger(monitor, entry) {
     const env = createBaseLogger(monitor);
     return Object.assign(Object.assign({}, env), new LongTaskLogger(entry.startTime, entry.duration, entry.name, entry.entryType));
-}
-function createWebVitalLogger(monitor, webvital) {
-    const env = createBaseLogger(monitor);
-    return Object.assign(Object.assign(Object.assign({}, env), new WebVitalsLogger()), webvital);
 }
 function createCrashLogger(monitor) {
     const env = createBaseLogger(monitor);
@@ -2919,6 +2915,13 @@ class ResourcePerformanceLogger extends PerformanceBaseLogger {
         this.resourceType = resourceType;
         this.src = src;
         this.duration = duration;
+    }
+}
+class WebVitalLogger extends PerformanceBaseLogger {
+    constructor(webvital) {
+        super();
+        this.type = "WebVitals";
+        return Object.assign(Object.assign({}, this), webvital);
     }
 }
 
@@ -3238,16 +3241,16 @@ class LongTimeTaskPlugin {
 var e,n,t,i$1,a=-1,o=function(e){addEventListener("pageshow",(function(n){n.persisted&&(a=n.timeStamp,e(n));}),!0);},c=function(){return window.performance&&performance.getEntriesByType&&performance.getEntriesByType("navigation")[0]},u=function(){var e=c();return e&&e.activationStart||0},f=function(e,n){var t=c(),i="navigate";return a>=0?i="back-forward-cache":t&&(i=document.prerendering||u()>0?"prerender":document.wasDiscarded?"restore":t.type.replace(/_/g,"-")),{name:e,value:void 0===n?-1:n,rating:"good",delta:0,entries:[],id:"v3-".concat(Date.now(),"-").concat(Math.floor(8999999999999*Math.random())+1e12),navigationType:i}},s=function(e,n,t){try{if(PerformanceObserver.supportedEntryTypes.includes(e)){var i=new PerformanceObserver((function(e){Promise.resolve().then((function(){n(e.getEntries());}));}));return i.observe(Object.assign({type:e,buffered:!0},t||{})),i}}catch(e){}},d=function(e,n){var t=function t(i){"pagehide"!==i.type&&"hidden"!==document.visibilityState||(e(i),n&&(removeEventListener("visibilitychange",t,!0),removeEventListener("pagehide",t,!0)));};addEventListener("visibilitychange",t,!0),addEventListener("pagehide",t,!0);},v=function(e,n,t,i){var r,a;return function(o){n.value>=0&&(o||i)&&((a=n.value-(r||0))||void 0===r)&&(r=n.value,n.delta=a,n.rating=function(e,n){return e>n[1]?"poor":e>n[0]?"needs-improvement":"good"}(n.value,t),e(n));}},l=function(e){requestAnimationFrame((function(){return requestAnimationFrame((function(){return e()}))}));},p=function(e){document.prerendering?addEventListener("prerenderingchange",(function(){return e()}),!0):e();},m=-1,h=function(){return "hidden"!==document.visibilityState||document.prerendering?1/0:0},g=function(e){"hidden"===document.visibilityState&&m>-1&&(m="visibilitychange"===e.type?e.timeStamp:0,T());},y=function(){addEventListener("visibilitychange",g,!0),addEventListener("prerenderingchange",g,!0);},T=function(){removeEventListener("visibilitychange",g,!0),removeEventListener("prerenderingchange",g,!0);},E=function(){return m<0&&(m=h(),y(),o((function(){setTimeout((function(){m=h(),y();}),0);}))),{get firstHiddenTime(){return m}}},L=function(e,n){n=n||{},p((function(){var t,i=[1800,3e3],r=E(),a=f("FCP"),c=s("paint",(function(e){e.forEach((function(e){"first-contentful-paint"===e.name&&(c.disconnect(),e.startTime<r.firstHiddenTime&&(a.value=Math.max(e.startTime-u(),0),a.entries.push(e),t(!0)));}));}));c&&(t=v(e,a,i,n.reportAllChanges),o((function(r){a=f("FCP"),t=v(e,a,i,n.reportAllChanges),l((function(){a.value=performance.now()-r.timeStamp,t(!0);}));})));}));},C=function(e,n){n=n||{},p((function(){var t,i=[.1,.25],r=f("CLS"),a=-1,c=0,u=[],p=function(n){a>-1&&e(n);},m=function(e){e.forEach((function(e){if(!e.hadRecentInput){var n=u[0],i=u[u.length-1];c&&e.startTime-i.startTime<1e3&&e.startTime-n.startTime<5e3?(c+=e.value,u.push(e)):(c=e.value,u=[e]),c>r.value&&(r.value=c,r.entries=u,t());}}));},h=s("layout-shift",m);h&&(t=v(p,r,i,n.reportAllChanges),L((function(e){a=e.value,r.value<0&&(r.value=0,t());})),d((function(){m(h.takeRecords()),t(!0);})),o((function(){c=0,a=-1,r=f("CLS",0),t=v(p,r,i,n.reportAllChanges),l((function(){return t()}));})));}));},b={passive:!0,capture:!0},w=new Date,S=function(i,r){e||(e=r,n=i,t=new Date,P(removeEventListener),A());},A=function(){if(n>=0&&n<t-w){var r={entryType:"first-input",name:e.type,target:e.target,cancelable:e.cancelable,startTime:e.timeStamp,processingStart:e.timeStamp+n};i$1.forEach((function(e){e(r);})),i$1=[];}},I=function(e){if(e.cancelable){var n=(e.timeStamp>1e12?new Date:performance.now())-e.timeStamp;"pointerdown"==e.type?function(e,n){var t=function(){S(e,n),r();},i=function(){r();},r=function(){removeEventListener("pointerup",t,b),removeEventListener("pointercancel",i,b);};addEventListener("pointerup",t,b),addEventListener("pointercancel",i,b);}(n,e):S(n,e);}},P=function(e){["mousedown","keydown","touchstart","pointerdown"].forEach((function(n){return e(n,I,b)}));},F=function(t,r){r=r||{},p((function(){var a,c=[100,300],u=E(),l=f("FID"),p=function(e){e.startTime<u.firstHiddenTime&&(l.value=e.processingStart-e.startTime,l.entries.push(e),a(!0));},m=function(e){e.forEach(p);},h=s("first-input",m);a=v(t,l,c,r.reportAllChanges),h&&d((function(){m(h.takeRecords()),h.disconnect();}),!0),h&&o((function(){var o;l=f("FID"),a=v(t,l,c,r.reportAllChanges),i$1=[],n=-1,e=null,P(addEventListener),o=p,i$1.push(o),A();}));}));},z={},G=function(e,n){n=n||{},p((function(){var t,i=[2500,4e3],r=E(),a=f("LCP"),c=function(e){var n=e[e.length-1];if(n){var i=Math.max(n.startTime-u(),0);i<r.firstHiddenTime&&(a.value=i,a.entries=[n],t());}},p=s("largest-contentful-paint",c);if(p){t=v(e,a,i,n.reportAllChanges);var m=function(){z[a.id]||(c(p.takeRecords()),p.disconnect(),z[a.id]=!0,t(!0));};["keydown","click"].forEach((function(e){addEventListener(e,m,{once:!0,capture:!0});})),d(m,!0),o((function(r){a=f("LCP"),t=v(e,a,i,n.reportAllChanges),l((function(){a.value=performance.now()-r.timeStamp,z[a.id]=!0,t(!0);}));}));}}));},J=function e(n){document.prerendering?p((function(){return e(n)})):"complete"!==document.readyState?addEventListener("load",(function(){return e(n)}),!0):setTimeout(n,0);},K=function(e,n){n=n||{};var t=[800,1800],i=f("TTFB"),r=v(e,i,t,n.reportAllChanges);J((function(){var a=c();if(a){var s=a.responseStart;if(s<=0||s>performance.now())return;i.value=Math.max(s-u(),0),i.entries=[a],r(!0),o((function(){i=f("TTFB",0),(r=v(e,i,t,n.reportAllChanges))(!0);}));}}));};
 
 class WebVitalsPlugin {
-    constructor(instance) {
-        this.instance = instance;
+    constructor(monitor) {
+        this.monitor = monitor;
         this.performance = {};
     }
     init() { }
     run() {
         return __awaiter$1(this, void 0, void 0, function* () {
             const callback = (value) => {
-                var _a;
-                (_a = this.instance.senderInstance) === null || _a === void 0 ? void 0 : _a.post(createWebVitalLogger(this.instance, value));
+                const log = new WebVitalLogger(value);
+                this.monitor.send(log);
             };
             [C, F, G, L, K].forEach(method => {
                 method(callback);

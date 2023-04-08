@@ -1,21 +1,22 @@
 import WebMonitor from "web/WebMonitor"
 import { Plugin } from "share/Plugin"
-import { MAX_DURATION } from "./constant"
-import { createLongTaskLogger } from "../../../logger/index"
+import { LongTaskLogger } from "web/logger/index"
 
 export class LongTimeTaskPlugin implements Plugin {
-    instance: WebMonitor
-    observer?: PerformanceObserver
-    constructor(instance: WebMonitor) {
-        this.instance = instance
+    monitor: WebMonitor
+    observer!: PerformanceObserver
+    constructor(monitor: WebMonitor) {
+        this.monitor = monitor
     }
     init() { }
     run() {
         const callback = (entryList: PerformanceObserverEntryList) => {
             entryList.getEntries().forEach((entry) => {
-                if (entry.duration < MAX_DURATION) return;
-                const logger = createLongTaskLogger(this.instance, entry);
-                this.instance.senderInstance?.post(logger)
+                // 放宽界限
+                if (entry.duration < this.monitor.longtask_time) return;
+                const { startTime, duration, entryType, name } = entry
+                const logger = new LongTaskLogger(startTime, duration, entryType, name)
+                this.monitor.send(logger)
             });
         }
         this.observer = new PerformanceObserver(callback)
