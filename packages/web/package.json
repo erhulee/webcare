@@ -1,10 +1,11 @@
 {
-  "name": "web-monitor",
+  "name": "sniper-web",
   "version": "1.0.0",
   "main": "dist/index.js",
   "license": "MIT",
   "type": "module",
   "scripts": {
+    "dev": "rollup -c -w",
     "build": "rollup -c"
   },
   "dependencies": {

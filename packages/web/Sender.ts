@@ -1,14 +1,14 @@
 import { Monitor } from "../share/Monitor";
 import { isStatusOk } from "./util";
 import WebMonitor from "./WebMonitor";
-import {Sender} from "../share/Sender"
+import { Sender } from "../share/Sender"
 
 const KEY = "__Web_Monitor_List__"
 class BeaconSender<Report> implements Sender<WebMonitor>{
     endpoint: string;
     instance: WebMonitor;
     method: "post" = "post";
-    constructor(endpoint:string, instance: WebMonitor){
+    constructor(endpoint: string, instance: WebMonitor) {
         this.endpoint = endpoint;
         this.instance = instance;
     }
@@ -17,7 +17,7 @@ class BeaconSender<Report> implements Sender<WebMonitor>{
     }
 }
 
-class XHRSender<Report extends {appid: string}> implements Sender<WebMonitor>{
+class XHRSender<Report extends { appid: string }> implements Sender<WebMonitor>{
     endpoint: string;
     instance: WebMonitor;
     method: "post" | "get";
@@ -25,54 +25,55 @@ class XHRSender<Report extends {appid: string}> implements Sender<WebMonitor>{
     cache: Report[];
     origin_threshold: number
     threshold: number
-    constructor(endpoint:string, 
-                instance: WebMonitor, 
-                method:"post" | "get",
-                threshold: number = 1
-                ){
+    constructor(endpoint: string,
+        instance: WebMonitor,
+        method: "post" | "get",
+        threshold: number = 1
+    ) {
         this.endpoint = endpoint;
         this.instance = instance;
-        this.method   = method;
+        this.method = method;
         this.threshold = threshold;
         this.origin_threshold = threshold;
-        this.cache    = []
+        this.cache = []
     }
     private _post(): Promise<any> {
-        const that = this; 
+        const that = this;
         const data = this.cache;
         const body = {
             appid: this.instance.appid,
             logger: data
         }
-        const promise = new Promise((resolve, reject)=>{
+        const promise = new Promise((resolve, reject) => {
             const xhr = new XMLHttpRequest();
             xhr.open(that.method, that.endpoint);
             xhr.setRequestHeader("Content-Type", 'application/json');
-            xhr.send(JSON.stringify(body));
-            xhr.addEventListener("readystatechange", function (){
-                if(this.readyState == 4){
-                    if(isStatusOk(this.status)){
-                        if(that.threshold !== that.origin_threshold) that.threshold /= 2;
+            console.log(this.instance.nativeXHRSend, JSON.stringify(body))
+            this.instance.nativeXHRSend?.call(xhr, JSON.stringify(body))
+            xhr.addEventListener("readystatechange", function () {
+                if (this.readyState == 4) {
+                    if (isStatusOk(this.status)) {
+                        if (that.threshold !== that.origin_threshold) that.threshold /= 2;
                         that.cache = [];
                         localStorage.removeItem(KEY)
-                    }else{
+                    } else {
                         that.threshold *= 2;
                         localStorage.setItem(KEY, JSON.stringify(that.cache));
                     }
                     resolve(this.response)
                 }
             })
-       })
+        })
 
-       return promise
+        return promise
     }
 
-    post(data: Report):Promise<any>{
+    post(data: Report): Promise<any> {
         this.cache.push(data);
-        if(this.cache.length < this.threshold){
+        if (this.cache.length < this.threshold) {
             localStorage.setItem(KEY, JSON.stringify(this.cache))
             return Promise.resolve("cache success");
-        }else{
+        } else {
             return this._post();
         }
     }

@@ -12,12 +12,14 @@ export class JSErrorPlugin implements Plugin {
     }
     init() {
         this.error_listener = (e: ErrorEvent) => {
-            const log = new JSErrorLogger(e.message, e.error.stack)
+            const log = new JSErrorLogger(e.message, e.error?.stack, this.monitor.rrwebStack)
+            console.log(e)
             this.monitor.send(log)
         }
         this.promise_listener = (e: ErrorEvent) => {
             // if ((e as any).target.localname !== undefined) return;
-            const log = new PromiseErrorLogger(e.message, e.error.stack)
+            console.log(e)
+            const log = new PromiseErrorLogger(e.message, e.error?.stack, this.monitor.rrwebStack)
             this.monitor.send(log)
         }
     }

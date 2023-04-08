@@ -2754,10 +2754,12 @@ class XHRSender {
             logger: data
         };
         const promise = new Promise((resolve, reject) => {
+            var _a;
             const xhr = new XMLHttpRequest();
             xhr.open(that.method, that.endpoint);
             xhr.setRequestHeader("Content-Type", 'application/json');
-            xhr.send(JSON.stringify(body));
+            console.log(this.instance.nativeXHRSend, JSON.stringify(body));
+            (_a = this.instance.nativeXHRSend) === null || _a === void 0 ? void 0 : _a.call(xhr, JSON.stringify(body));
             xhr.addEventListener("readystatechange", function () {
                 if (this.readyState == 4) {
                     if (isStatusOk(this.status)) {
@@ -2802,14 +2804,11 @@ const UNKNOWN = "unknown";
 // 父类仅仅作为收集环境
 class BaseLogger {
     constructor() {
-        this.monitor = window.__SNIPER__;
-        this.environments = {
-            userAgent: navigator.userAgent,
-            dateTime: Date.now().valueOf(),
-            did: window.__SNIPER__.fingerprint || UNKNOWN,
-            uid: window.__SNIPER__.uid || UNKNOWN,
-            path: window.location.href
-        };
+        this.userAgent = navigator.userAgent;
+        this.dateTime = Date.now().valueOf();
+        this.did = window.__SNIPER__.fingerprint || UNKNOWN;
+        this.uid = window.__SNIPER__.uid || UNKNOWN;
+        this.path = window.location.href;
     }
 }
 class StabilityBaseLogger extends BaseLogger {
@@ -2825,18 +2824,17 @@ class PerformanceBaseLogger extends BaseLogger {
     }
 }
 class JSErrorLogger extends StabilityBaseLogger {
-    constructor(message, stack) {
-        var _a;
+    constructor(message, stack, rrwebStack) {
         super();
         this.type = "JS";
         this.message = message;
         this.stack = stack;
-        this.rrwebStack = (_a = this.monitor.rrwebStack) !== null && _a !== void 0 ? _a : [];
+        this.rrwebStack = rrwebStack;
     }
 }
 class PromiseErrorLogger extends JSErrorLogger {
-    constructor(message, stack) {
-        super(message, stack);
+    constructor(message, stack, rrwebStack) {
+        super(message, stack, rrwebStack);
     }
 }
 class HTTPErrorLogger extends StabilityBaseLogger {
@@ -2903,12 +2901,16 @@ class JSErrorPlugin {
     }
     init() {
         this.error_listener = (e) => {
-            const log = new JSErrorLogger(e.message, e.error.stack);
+            var _a;
+            const log = new JSErrorLogger(e.message, (_a = e.error) === null || _a === void 0 ? void 0 : _a.stack, this.monitor.rrwebStack);
+            console.log(e);
             this.monitor.send(log);
         };
         this.promise_listener = (e) => {
+            var _a;
             // if ((e as any).target.localname !== undefined) return;
-            const log = new PromiseErrorLogger(e.message, e.error.stack);
+            console.log(e);
+            const log = new PromiseErrorLogger(e.message, (_a = e.error) === null || _a === void 0 ? void 0 : _a.stack, this.monitor.rrwebStack);
             this.monitor.send(log);
         };
     }
@@ -2931,6 +2933,7 @@ class HTTPPlugin {
         const instance = this;
         /* xhr 劫持 */
         this.nativeXHRSend = XMLHttpRequest.prototype.send;
+        this.monitor.nativeXHRSend = this.nativeXHRSend;
         XMLHttpRequest.prototype.send = function (...arg) {
             let self = this;
             const startTime = Date.now();
@@ -3041,6 +3044,8 @@ class ResourcePlugin {
             this.performanceObserver = new PerformanceObserver(((list, observer) => {
                 const entries = list.getEntriesByType("resource");
                 entries.forEach((entry) => {
+                    if (entry.initiatorType == "xmlhttprequest")
+                        return;
                     const isFail = entry.transferSize == 0;
                     let logger = null;
                     const url = entry.name;
@@ -7202,6 +7207,7 @@ class RrwebPlugin {
 }
 
 const DEFAULT_LONGTASK_TIME = 50;
+const DEFAULT_ENDPOINT = "https://bdul0j.laf.dev/logger";
 function getDid() {
     return __awaiter$1(this, void 0, void 0, function* () {
         const fpPromise = index.load();
@@ -7215,7 +7221,7 @@ class WebMonitor extends Monitor {
         console.info("如果要使用，请使用 PVPlugin 覆盖这个方法");
     }
     constructor(options) {
-        super(options.appid, options.endpoint, options.method, options.sample_rate);
+        super(options.appid, options.endpoint || DEFAULT_ENDPOINT, options.method, options.sample_rate);
         // did -> 浏览器指纹
         this.fingerprint = "unknown";
         // 事件栈，可能有用~ -> 统计页面跳出率
@@ -7225,7 +7231,7 @@ class WebMonitor extends Monitor {
         const { method, senderType, threshold = 1, endpoint, longtask_time = DEFAULT_LONGTASK_TIME } = options;
         this.longtask_time = longtask_time;
         getDid().then(did => this.fingerprint = did);
-        this.initSender(senderType, method, endpoint, threshold);
+        this.initSender(senderType, method, endpoint || DEFAULT_ENDPOINT, threshold);
         this.initPlugins(options.plugins);
     }
     // 频控 / 检查
@@ -7270,3 +7276,5 @@ class WebMonitor extends Monitor {
 }
 
 window.WebMonitor = WebMonitor;
+
+export { WebMonitor as default };

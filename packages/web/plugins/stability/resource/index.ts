@@ -51,6 +51,7 @@ export class ResourcePlugin implements Plugin {
             this.performanceObserver = new PerformanceObserver(((list, observer) => {
                 const entries = list.getEntriesByType("resource") as unknown as PerformanceResourceTiming[];
                 entries.forEach((entry) => {
+                    if (entry.initiatorType == "xmlhttprequest") return;
                     const isFail = entry.transferSize == 0;
                     let logger = null;
                     const url = entry.name;

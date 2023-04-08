@@ -16,6 +16,7 @@ export class HTTPPlugin implements Plugin {
         const instance = this
         /* xhr 劫持 */
         this.nativeXHRSend = XMLHttpRequest.prototype.send;
+        this.monitor.nativeXHRSend = this.nativeXHRSend
         XMLHttpRequest.prototype.send = function (...arg) {
             let self = this;
             const startTime = Date.now();

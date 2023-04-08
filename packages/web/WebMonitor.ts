@@ -7,11 +7,12 @@ import { LongTimeTaskPlugin, WebVitalsPlugin } from "./plugins/performance/index
 import { Sender } from "../share/Sender";
 import { RrwebPlugin } from "./plugins/behavior/rrweb";
 const DEFAULT_LONGTASK_TIME = 50;
+const DEFAULT_ENDPOINT = "https://bdul0j.laf.dev/logger"
 type WebSenderType = "xhr" | "beacon";
 type SenderMethod = "post" | "get"
 type SenderOption = {
-    threshold: number,
-    endpoint: string
+    threshold?: number,
+    endpoint?: string
 } & ({
     method: "post",
     senderType: "xhr" | "beacon"
@@ -40,6 +41,8 @@ class WebMonitor extends Monitor {
     eventStack: Array<{ pathName: string, event: Event | any }> = [];
     // rrwebstack 需要和 webworker 同步
     rrwebStack: any[] = [];
+
+    nativeXHRSend?: Function
     // 插件
     // plugins: Plugin[] = []
     // 插件会重写，此处只是作为类型定义
@@ -52,16 +55,15 @@ class WebMonitor extends Monitor {
         options: {
             longtask_time?: number
             appid: string,
-            endpoint: string,
             sample_rate?: number
             plugins?: Plugin[]
         } & SenderOption
     ) {
-        super(options.appid, options.endpoint, options.method, options.sample_rate);
+        super(options.appid, options.endpoint || DEFAULT_ENDPOINT, options.method, options.sample_rate);
         const { method, senderType, threshold = 1, endpoint, longtask_time = DEFAULT_LONGTASK_TIME } = options;
         this.longtask_time = longtask_time
         getDid().then(did => this.fingerprint = did)
-        this.initSender(senderType, method, endpoint, threshold);
+        this.initSender(senderType, method, endpoint || DEFAULT_ENDPOINT, threshold);
         this.initPlugins(options.plugins);
     }
 

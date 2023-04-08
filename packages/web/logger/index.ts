@@ -15,24 +15,17 @@ import { ResourceType } from "./type";
 const UNKNOWN = "unknown"
 // 父类仅仅作为收集环境
 class BaseLogger {
-    environments: {
-        userAgent: string,
-        dateTime: number,
-        did: string,
-        uid: string
-        path: string
-    }
-    monitor: WebMonitor
-
+    userAgent: string
+    dateTime: number
+    did: string
+    uid: string
+    path: string
     constructor() {
-        this.monitor = window.__SNIPER__
-        this.environments = {
-            userAgent: navigator.userAgent,
-            dateTime: Date.now().valueOf(),
-            did: (window.__SNIPER__ as WebMonitor).fingerprint || UNKNOWN,
-            uid: (window.__SNIPER__ as WebMonitor).uid || UNKNOWN,
-            path: window.location.href
-        }
+        this.userAgent = navigator.userAgent
+        this.dateTime = Date.now().valueOf()
+        this.did = (window.__SNIPER__ as WebMonitor).fingerprint || UNKNOWN
+        this.uid = (window.__SNIPER__ as WebMonitor).uid || UNKNOWN
+        this.path = window.location.href
     }
 }
 
@@ -52,17 +45,17 @@ export class JSErrorLogger extends StabilityBaseLogger {
     message: string
     stack: string
     rrwebStack: any[]
-    constructor(message: string, stack: string) {
+    constructor(message: string, stack: string, rrwebStack: any[]) {
         super();
         this.message = message
         this.stack = stack
-        this.rrwebStack = this.monitor.rrwebStack ?? [];
+        this.rrwebStack = rrwebStack
     }
 }
 
 export class PromiseErrorLogger extends JSErrorLogger {
-    constructor(message: string, stack: string) {
-        super(message, stack);
+    constructor(message: string, stack: string, rrwebStack: any[]) {
+        super(message, stack, rrwebStack);
     }
 }
 
