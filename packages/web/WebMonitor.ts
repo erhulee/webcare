@@ -39,7 +39,7 @@ class WebMonitor extends Monitor {
     // rrwebstack 需要和 webworker 同步
     rrwebStack: any[] = [];
     // 插件
-    plugins: Plugin[] = []
+    // plugins: Plugin[] = []
     // 插件会重写，此处只是作为类型定义
     trackLog?: (...arg: any[]) => void;
     trackPV(pathName: string, preLocation: { pathname: string }, search?: string,) {
@@ -50,22 +50,30 @@ class WebMonitor extends Monitor {
         //     this.senderInstance?.post(createBounceRateLogger(this, pathName))
         // }
     }
-    send(data: any) {
-        this.senderInstance?.post(data);
-    }
+
     constructor(
         options: {
             appid: string,
             endpoint: string,
+            sample_rate?: number
             plugins?: Plugin[]
         } & SenderOption
     ) {
-        super(options.appid, options.endpoint, options.method);
-        const { appid, method, senderType, threshold = 1, endpoint } = options;
+        super(options.appid, options.endpoint, options.method, options.sample_rate);
+        const { method, senderType, threshold = 1, endpoint } = options;
         getDid().then(did => this.fingerprint = did)
         this.initSender(senderType, method, endpoint, threshold);
         this.initPlugins(options.plugins);
     }
+
+    // 频控 / 检查
+    send(data: any) {
+        if (data == null) return;
+        // 暂定频控
+        if (Math.random() > this.sample_rate) return;
+        this.senderInstance?.post(data);
+    }
+
 
     initSender(senderType: WebSenderType, senderMethod: SenderMethod, endpoint: string, threshold: number) {
         if (senderType == "beacon") {

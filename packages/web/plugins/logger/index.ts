@@ -1,5 +1,5 @@
 import WebMonitor from "web/WebMonitor";
-import { CrashLogger, LongTaskLogger, ResourceLogger, ResourceType, WebVital, WebVitalsLogger } from "./type";
+import { CrashLogger, LongTaskLogger, ResourceType, WebVital, WebVitalsLogger } from "./type";
 
 // 负责环境变量和指纹的注入
 function createBaseLogger(monitor: WebMonitor) {
@@ -16,16 +16,6 @@ function createBaseLogger(monitor: WebMonitor) {
 }
 
 
-export function createResourceLogger(monitor: WebMonitor, type: ResourceType, url: string, duration?: number) {
-    const env = createBaseLogger(monitor);
-    if (!Boolean(type) || !Boolean(url)) return null
-    // 有 duration -> 资源加载成功
-    // 没有 duration -> 资源加载失败
-    return {
-        ...env,
-        ...new ResourceLogger(type, url, duration)
-    }
-}
 
 export function createLongTaskLogger(monitor: WebMonitor, entry: PerformanceEntry) {
     const env = createBaseLogger(monitor);

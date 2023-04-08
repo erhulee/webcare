@@ -1,4 +1,5 @@
 import WebMonitor from "web/WebMonitor"
+import { ResourceType } from "./type"
 const UNKNOWN = "unknown"
 // 父类仅仅作为收集环境
 class BaseLogger {
@@ -60,9 +61,18 @@ export class HTTPErrorLogger extends StabilityBaseLogger {
     }
 }
 
+export class ResourceErrorLogger extends StabilityBaseLogger {
+    type: "Resource" = "Resource"
+    resourceType: ResourceType
+    src: string
+    constructor(resourceType: ResourceType, src: string,) {
+        super();
+        this.resourceType = resourceType
+        this.src = src
+    }
+}
 
-
-export class HTTPPerformanceLogger extends StabilityBaseLogger {
+export class HTTPPerformanceLogger extends PerformanceBaseLogger {
     type: "HTTP" = "HTTP"
     duration: number
     url: string
@@ -70,6 +80,19 @@ export class HTTPPerformanceLogger extends StabilityBaseLogger {
         super();
         this.duration = duration
         this.url = url
+    }
+}
+
+export class ResourcePerformanceLogger extends PerformanceBaseLogger {
+    type: "Resource" = "Resource"
+    resourceType: ResourceType
+    src: string
+    duration: number
+    constructor(resourceType: ResourceType, src: string, duration: number) {
+        super();
+        this.resourceType = resourceType
+        this.src = src
+        this.duration = duration
     }
 }
 

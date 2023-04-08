@@ -11,7 +11,6 @@ export type WebVital = {
 export enum ResourceType {
     Image = "img",
     CSS = "link",
-
     Javascript = "script",
     Video = "video",
     Audio = "audio",
@@ -24,20 +23,6 @@ interface Logger {
 }
 
 
-
-
-export class ResourceLogger implements Logger {
-    category: "stability" = "stability"
-    type: "Resource" = "Resource"
-    resourceType: ResourceType
-    src: string
-    duration?: number
-    constructor(resourceType: ResourceType, src: string, duration?: number) {
-        this.resourceType = resourceType
-        this.src = src
-        if (typeof duration !== "undefined") this.duration = duration
-    }
-}
 
 export class CrashLogger implements Logger {
     category: "stability" = "stability"

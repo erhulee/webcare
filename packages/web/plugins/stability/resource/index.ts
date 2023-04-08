@@ -1,8 +1,8 @@
 
 import WebMonitor from "web/WebMonitor";
 import { Plugin } from "share/Plugin"
-import { createResourceLogger } from "../../logger/index";
 import { ResourceType } from "../../logger/type";
+import { ResourceErrorLogger, ResourcePerformanceLogger } from "web/plugins/logger/factory";
 function analyzeLinkType(attribute: { rel?: string, type?: string, href?: string, as?: string }) {
     function isCSS(): boolean {
         const { rel, type, href, as } = attribute;
@@ -36,11 +36,11 @@ const tagName2ResourceType: { [key: string]: ResourceType } = {
     unknown: ResourceType.
 }
 export class ResourcePlugin implements Plugin {
-    instance: WebMonitor
+    monitor: WebMonitor
     listener: ((e: any) => void) | null = null
     performanceObserver: PerformanceObserver | null = null
-    constructor(instance: WebMonitor) {
-        this.instance = instance;
+    constructor(monitor: WebMonitor) {
+        this.monitor = monitor;
     }
     init() {
 
@@ -56,13 +56,13 @@ export class ResourcePlugin implements Plugin {
                     const url = entry.name;
                     const type = entry.initiatorType;
                     if (isFail) {
-                        logger = createResourceLogger(that.instance, tagName2ResourceType[type], url);
+                        logger = new ResourceErrorLogger(tagName2ResourceType[type], url);
                     } else {
                         // 如果成功的 -> 上报duration
                         const duration = entry.duration
-                        logger = createResourceLogger(that.instance, tagName2ResourceType[type], url, duration);
+                        logger = new ResourcePerformanceLogger(tagName2ResourceType[type], url, duration);
                     }
-                    that.instance.senderInstance?.post(logger)
+                    that.monitor.send(logger)
                 })
             }))
             this.performanceObserver.observe({
@@ -83,14 +83,14 @@ export class ResourcePlugin implements Plugin {
                     const attributes = buildAttributesObject(target.attributes, ["rel", "type", "href", "as"] as const);
                     const type = analyzeLinkType(attributes);
                     const url = attributes.href;
-                    logger = createResourceLogger(that.instance, tagName2ResourceType[type], url)
+                    logger = new ResourceErrorLogger(tagName2ResourceType[type], url);
                 } else {
                     const tag = nodeName.toLowerCase();
                     const url = target.src;
-                    logger = createResourceLogger(that.instance, tagName2ResourceType[tag], url)
+                    logger = new ResourceErrorLogger(tagName2ResourceType[tag], url);
                 }
 
-                if (logger !== null) that.instance.senderInstance?.post(logger)
+                that.monitor.send(logger)
             }
             this.listener = listener;
             window.addEventListener("error", listener, true)
