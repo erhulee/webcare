@@ -1,5 +1,5 @@
 import WebMonitor from "web/WebMonitor";
-import { CrashLogger, HTTPErrorLogger, JSErrorLogger, LongTaskLogger, ResourceLogger, ResourceType, WebVital, WebVitalsLogger } from "./type";
+import { CrashLogger, LongTaskLogger, ResourceLogger, ResourceType, WebVital, WebVitalsLogger } from "./type";
 
 // 负责环境变量和指纹的注入
 function createBaseLogger(monitor: WebMonitor) {
@@ -16,47 +16,6 @@ function createBaseLogger(monitor: WebMonitor) {
 }
 
 
-export function createJSErrorLogger(monitor: WebMonitor, message: string, stack: any) {
-    const env = createBaseLogger(monitor);
-    const logger = new JSErrorLogger(message, stack);
-    const rrwebStack = monitor.rrwebStack
-    return {
-        ...env,
-        ...logger,
-        rrwebStack
-    }
-}
-
-export function createPromiseErrorLogger(monitor: WebMonitor, message: string, stack: any) {
-    const env = createBaseLogger(monitor);
-    const logger = new JSErrorLogger(message, stack);
-    return {
-        ...env,
-        ...logger
-    }
-}
-
-
-export function createHTTPLogger(monitor: WebMonitor, response: XMLHttpRequest | Response, type: "XHR" | "Fetch") {
-    const env = createBaseLogger(monitor);
-    let status = response.status;
-    let url = "";
-    if (type == "XHR") {
-        const xhrResponse = response as XMLHttpRequest;
-        url = xhrResponse.responseURL;
-    } else {
-        const fetchResponse = response as Response;
-        url = fetchResponse.url;
-    }
-    return {
-        ...env,
-        ...new HTTPErrorLogger(status, url)
-    }
-}
-
-export function createHTTPPerformanceLogger(monitor: WebMonitor, url: string, duration: number) {
-    return {}
-}
 export function createResourceLogger(monitor: WebMonitor, type: ResourceType, url: string, duration?: number) {
     const env = createBaseLogger(monitor);
     if (!Boolean(type) || !Boolean(url)) return null

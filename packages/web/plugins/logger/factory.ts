@@ -30,7 +30,7 @@ class PerformanceBaseLogger extends BaseLogger {
     category = "performance"
 }
 
-class JSErrorLogger extends StabilityBaseLogger {
+export class JSErrorLogger extends StabilityBaseLogger {
     type: "JS" = "JS"
     message: string
     stack: string
@@ -43,7 +43,7 @@ class JSErrorLogger extends StabilityBaseLogger {
     }
 }
 
-class PromiseErrorLogger extends JSErrorLogger {
+export class PromiseErrorLogger extends JSErrorLogger {
     constructor(message: string, stack: string) {
         super(message, stack);
     }

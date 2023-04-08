@@ -90,6 +90,7 @@ class WebMonitor extends Monitor {
 
     async start() {
         window.__SNIPER__ = this
+        this.plugins.forEach(plugin => plugin.init());
         this.plugins.forEach(plugin => plugin.run());
     }
 }

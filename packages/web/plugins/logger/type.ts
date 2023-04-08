@@ -23,16 +23,6 @@ interface Logger {
     type: StabilityType | PerformanceType
 }
 
-export class JSErrorLogger implements Logger {
-    category: "stability" = "stability"
-    type: "JS" = "JS"
-    stack: any
-    message: string
-    constructor(message: string, stack: any) {
-        this.stack = stack;
-        this.message = message;
-    }
-}
 
 
 
