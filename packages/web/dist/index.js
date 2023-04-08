@@ -2788,61 +2788,16 @@ class XHRSender {
     }
 }
 
-var ResourceType;
-(function (ResourceType) {
-    ResourceType["Image"] = "img";
-    ResourceType["CSS"] = "link";
-    ResourceType["Javascript"] = "script";
-    ResourceType["Video"] = "video";
-    ResourceType["Audio"] = "audio";
-    ResourceType["Unknown"] = "unknown";
-})(ResourceType || (ResourceType = {}));
-class CrashLogger {
-    constructor() {
-        this.category = "stability";
-        this.type = "Collapse";
-    }
-}
-class LongTaskLogger {
-    constructor(startTime, duration, eventType, eventName) {
-        this.category = "performance";
-        this.type = "LongTimeTask";
-        this.startTime = startTime;
-        this.duration = duration;
-        this.eventType = eventType;
-        this.eventName = eventName;
-    }
-}
-// export class WebVitalsLogger implements Logger {
-//     category: "performance" = "performance"
-//     type: "WebVitals" = "WebVitals"
-//     // webvitals: WebVital
-//     constructor() {
-//         // this.webvitals = webvitals
+// export function createBounceRateLogger(monitor: WebMonitor, pathname: string, search: string = "") {
+//     const env = createBaseLogger(monitor);
+//     return {
+//         ...env,
+//         category: "Behavior",
+//         type: "BounceRate",
+//         pathname,
+//         search
 //     }
 // }
-
-// 负责环境变量和指纹的注入
-function createBaseLogger(monitor) {
-    const userAgent = navigator.userAgent;
-    const dateTime = new Date();
-    const fingerPrint = monitor.fingerprint;
-    const path = window.location.href;
-    return {
-        path,
-        userAgent,
-        dateTime,
-        fingerPrint
-    };
-}
-function createLongTaskLogger(monitor, entry) {
-    const env = createBaseLogger(monitor);
-    return Object.assign(Object.assign({}, env), new LongTaskLogger(entry.startTime, entry.duration, entry.name, entry.entryType));
-}
-function createCrashLogger(monitor) {
-    const env = createBaseLogger(monitor);
-    return Object.assign(Object.assign({}, env), new CrashLogger());
-}
 const UNKNOWN = "unknown";
 // 父类仅仅作为收集环境
 class BaseLogger {
@@ -2900,6 +2855,13 @@ class ResourceErrorLogger extends StabilityBaseLogger {
         this.src = src;
     }
 }
+class CrashLogger extends StabilityBaseLogger {
+    constructor() {
+        super();
+        this.type = "Collapse";
+        this.rrwebStack = [];
+    }
+}
 class HTTPPerformanceLogger extends PerformanceBaseLogger {
     constructor(duration, url) {
         super();
@@ -2922,6 +2884,16 @@ class WebVitalLogger extends PerformanceBaseLogger {
         super();
         this.type = "WebVitals";
         return Object.assign(Object.assign({}, this), webvital);
+    }
+}
+class LongTaskLogger extends PerformanceBaseLogger {
+    constructor(startTime, duration, eventType, eventName) {
+        super();
+        this.type = "LongTimeTask";
+        this.startTime = startTime;
+        this.duration = duration;
+        this.eventType = eventType;
+        this.eventName = eventName;
     }
 }
 
@@ -3013,6 +2985,16 @@ class HTTPPlugin {
         window.fetch = this.nativeFetch;
     }
 }
+
+var ResourceType;
+(function (ResourceType) {
+    ResourceType["Image"] = "img";
+    ResourceType["CSS"] = "link";
+    ResourceType["Javascript"] = "script";
+    ResourceType["Video"] = "video";
+    ResourceType["Audio"] = "audio";
+    ResourceType["Unknown"] = "unknown";
+})(ResourceType || (ResourceType = {}));
 
 function analyzeLinkType(attribute) {
     function isCSS() {
@@ -3115,11 +3097,20 @@ class ResourcePlugin {
 }
 
 const work_source = `
+/*
+    每隔 1s 向主线程发送一个检测包
+    然后将这个包放入队列中
+
+    收到主线程的包后，队列出队
+    //TODO: 这个“5”后续可以配置
+    当队列中的待确认包大于五个的时候，诊断为页面卡死
+    并且把页面已经卡死标注 = true
+*/ 
 const msgQueue = [];
 // 崩溃只上报一次
 let   isPost   = false;
 
-// 把日志先生成发进来
+// 把日志生成发进来，后续只修改 rrweb 和 datetime
 let   loggerBased = {};
 let   endpoint = "";
 let   method   = "";
@@ -3151,7 +3142,6 @@ function post(){
     }
 }
 function init(logger, _endpoint, _method){
-    console.log(logger)
     loggerBased = logger;
     endpoint    = _endpoint;
     method      = _method;
@@ -3159,50 +3149,61 @@ function init(logger, _endpoint, _method){
 
 self.onmessage = function(e){
     const data = e.data;
+    const rrweb = data.rrwebStack;
     const type = data.type;
     switch(type){
         case "init":
             init(data.logger, data.endpoint, data.method);
             break;
-        default:
-            msgQueue.pop();
+        case "sync":
+            loggerBased.rrwebStack = data.rrwebStack;
+            msgQueue.shift();
+            break;
     }
-    
 }
 
-setInterval(()=>{
-    if(msgQueue.length >= 1 && !isPost){
-        post();
-    }else {
-        const queItem = "Web_Monitor_Test"
-        postMessage(queItem);
-        msgQueue.push(queItem);
+
+var timer = setInterval(()=>{
+    if(isPost){
+        clearInterval(timer);
+        return;
     }
-}, 5000);
+    if(msgQueue.length >= 5){
+        post();
+    }
+    const queItem = "Web_Monitor_Test"
+    postMessage(queItem);
+    msgQueue.push(queItem);
+
+
+}, 1000);
 
 `;
 
 class CrashPlugin {
     constructor(instance) {
-        this.instance = instance;
+        this.monitor = instance;
         this.worker = null;
     }
     init() {
     }
     run() {
-        // const worker = new Worker("webwork.js");
         const content = new Blob([work_source]);
         const worker = new Worker(URL.createObjectURL(content));
         this.worker = worker;
         worker.postMessage({
             type: "init",
-            endpoint: this.instance.endpoint,
-            method: this.instance.method,
-            logger: createCrashLogger(this.instance)
+            endpoint: this.monitor.endpoint,
+            method: this.monitor.method,
+            logger: new CrashLogger()
         });
         worker.addEventListener("message", (message) => {
             const data = message.data;
-            worker.postMessage(data);
+            worker.postMessage({
+                type: "sync",
+                data,
+                rrwebStack: this.monitor.rrwebStack
+            });
         });
     }
     unload() {
@@ -3212,21 +3213,20 @@ class CrashPlugin {
     }
 }
 
-const MAX_DURATION = 100;
-
 class LongTimeTaskPlugin {
-    constructor(instance) {
-        this.instance = instance;
+    constructor(monitor) {
+        this.monitor = monitor;
     }
     init() { }
     run() {
         const callback = (entryList) => {
             entryList.getEntries().forEach((entry) => {
-                var _a;
-                if (entry.duration < MAX_DURATION)
+                // 放宽界限
+                if (entry.duration < this.monitor.longtask_time)
                     return;
-                const logger = createLongTaskLogger(this.instance, entry);
-                (_a = this.instance.senderInstance) === null || _a === void 0 ? void 0 : _a.post(logger);
+                const { startTime, duration, entryType, name } = entry;
+                const logger = new LongTaskLogger(startTime, duration, entryType, name);
+                this.monitor.send(logger);
             });
         };
         this.observer = new PerformanceObserver(callback);
@@ -3258,43 +3258,6 @@ class WebVitalsPlugin {
         });
     }
     unload() {
-    }
-}
-
-// import { createBrowserHistory } from "history"
-// import { captureNativeFn } from "web/utils/captureNativeFn.ts"
-/*
-    history: popState 事件
-    hash: pushSate / replaceState 重写
-*/
-class EventsPlugin {
-    constructor(instance) {
-        this.eventKeys = ["click", "input", "keydown", "keyup"];
-        this.collectEventHandle = (e) => {
-            const pathName = location.pathname;
-            while (this.instance.eventStack.length >= 20) {
-                this.instance.eventStack.shift();
-            }
-            this.instance.eventStack.push({
-                pathName,
-                event: e
-            });
-        };
-        this.instance = instance;
-    }
-    init() {
-    }
-    run() {
-        return __awaiter$1(this, void 0, void 0, function* () {
-            this.eventKeys.forEach((event) => {
-                document.addEventListener(event, this.collectEventHandle);
-            });
-        });
-    }
-    unload() {
-        this.eventKeys.forEach((event) => {
-            document.removeEventListener(event, this.collectEventHandle);
-        });
     }
 }
 
@@ -7229,7 +7192,6 @@ class RrwebPlugin {
             const instance = this.instance;
             record({
                 emit(event) {
-                    console.log("Record:", event);
                     instance.rrwebStack.push(event);
                 }
             });
@@ -7239,6 +7201,7 @@ class RrwebPlugin {
     }
 }
 
+const DEFAULT_LONGTASK_TIME = 50;
 function getDid() {
     return __awaiter$1(this, void 0, void 0, function* () {
         const fpPromise = index.load();
@@ -7248,13 +7211,8 @@ function getDid() {
     });
 }
 class WebMonitor extends Monitor {
-    trackPV(pathName, preLocation, search) {
-        console.info("need override");
-        // this.senderInstance?.post(createPVLogger(this, pathName, search));
-        // const preEventIndex = this.eventStack.findIndex((item) => item.pathName == preLocation.pathname);
-        // if (preEventIndex === -1 || preEventIndex === this.eventStack.length - 1) {
-        //     this.senderInstance?.post(createBounceRateLogger(this, pathName))
-        // }
+    trackPV() {
+        console.info("如果要使用，请使用 PVPlugin 覆盖这个方法");
     }
     constructor(options) {
         super(options.appid, options.endpoint, options.method, options.sample_rate);
@@ -7264,7 +7222,8 @@ class WebMonitor extends Monitor {
         this.eventStack = [];
         // rrwebstack 需要和 webworker 同步
         this.rrwebStack = [];
-        const { method, senderType, threshold = 1, endpoint } = options;
+        const { method, senderType, threshold = 1, endpoint, longtask_time = DEFAULT_LONGTASK_TIME } = options;
+        this.longtask_time = longtask_time;
         getDid().then(did => this.fingerprint = did);
         this.initSender(senderType, method, endpoint, threshold);
         this.initPlugins(options.plugins);
@@ -7294,7 +7253,6 @@ class WebMonitor extends Monitor {
         new LongTimeTaskPlugin(this),
         new WebVitalsPlugin(this),
         new CrashPlugin(this),
-        new EventsPlugin(this),
         new RrwebPlugin(this)
     ]) {
         this.plugins = plugins;
@@ -7305,6 +7263,9 @@ class WebMonitor extends Monitor {
             this.plugins.forEach(plugin => plugin.init());
             this.plugins.forEach(plugin => plugin.run());
         });
+    }
+    setUid(uid) {
+        this.uid = uid;
     }
 }
 

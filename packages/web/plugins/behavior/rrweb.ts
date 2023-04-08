@@ -12,10 +12,8 @@ export class RrwebPlugin implements Plugin {
     }
     async run() {
         const instance = this.instance
-
         rrweb.record({
             emit(event: any) {
-                console.log("Record:", event);
                 instance.rrwebStack.push(event);
             }
         })

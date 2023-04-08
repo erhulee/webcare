@@ -1,53 +1,16 @@
 import WebMonitor from "web/WebMonitor";
-import { CrashLogger, ResourceType, WebVital } from "./type";
+import { ResourceType } from "./type";
 
-// 负责环境变量和指纹的注入
-function createBaseLogger(monitor: WebMonitor) {
-    const userAgent = navigator.userAgent;
-    const dateTime = new Date();
-    const fingerPrint = monitor.fingerprint;
-    const path = window.location.href;
-    return {
-        path,
-        userAgent,
-        dateTime,
-        fingerPrint
-    }
-}
-
-
-export function createCrashLogger(monitor: WebMonitor) {
-    const env = createBaseLogger(monitor);
-    return {
-        ...env,
-        ...new CrashLogger()
-    }
-}
-
-export function createPVLogger(monitor: WebMonitor, pathname: string, search: string = "") {
-    const env = createBaseLogger(monitor);
-    return {
-        ...env,
-        category: "Behavior",
-        type: "PV",
-        pathname,
-        search
-    }
-}
-
-export function createBounceRateLogger(monitor: WebMonitor, pathname: string, search: string = "") {
-    const env = createBaseLogger(monitor);
-    return {
-        ...env,
-        category: "Behavior",
-        type: "BounceRate",
-        pathname,
-        search
-    }
-}
-
-
-
+// export function createBounceRateLogger(monitor: WebMonitor, pathname: string, search: string = "") {
+//     const env = createBaseLogger(monitor);
+//     return {
+//         ...env,
+//         category: "Behavior",
+//         type: "BounceRate",
+//         pathname,
+//         search
+//     }
+// }
 
 const UNKNOWN = "unknown"
 // 父类仅仅作为收集环境
@@ -78,6 +41,10 @@ class StabilityBaseLogger extends BaseLogger {
 }
 class PerformanceBaseLogger extends BaseLogger {
     category = "performance"
+}
+
+class BehaviorBaseLogger extends BaseLogger {
+    category = "behavior"
 }
 
 export class JSErrorLogger extends StabilityBaseLogger {
@@ -118,6 +85,15 @@ export class ResourceErrorLogger extends StabilityBaseLogger {
         super();
         this.resourceType = resourceType
         this.src = src
+    }
+}
+
+export class CrashLogger extends StabilityBaseLogger {
+    type: "Collapse" = "Collapse"
+    rrwebStack: any[]
+    constructor() {
+        super()
+        this.rrwebStack = []
     }
 }
 
@@ -170,3 +146,14 @@ export class LongTaskLogger extends PerformanceBaseLogger {
         this.eventName = eventName
     }
 }
+
+
+export class PVLogger extends BehaviorBaseLogger {
+    type: "PV" = "PV"
+    uid: string
+    constructor(uid: string) {
+        super();
+        this.uid = uid
+    }
+}
+

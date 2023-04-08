@@ -5,7 +5,6 @@ import { Plugin } from "share/Plugin"
 import { CrashPlugin, HTTPPlugin, JSErrorPlugin, ResourcePlugin } from "./plugins/stability/index";
 import { LongTimeTaskPlugin, WebVitalsPlugin } from "./plugins/performance/index";
 import { Sender } from "../share/Sender";
-import { EventsPlugin } from "./plugins/behavior/events";
 import { RrwebPlugin } from "./plugins/behavior/rrweb";
 const DEFAULT_LONGTASK_TIME = 50;
 type WebSenderType = "xhr" | "beacon";
@@ -45,13 +44,8 @@ class WebMonitor extends Monitor {
     // plugins: Plugin[] = []
     // 插件会重写，此处只是作为类型定义
     trackLog?: (...arg: any[]) => void;
-    trackPV(pathName: string, preLocation: { pathname: string }, search?: string,) {
-        console.info("need override")
-        // this.senderInstance?.post(createPVLogger(this, pathName, search));
-        // const preEventIndex = this.eventStack.findIndex((item) => item.pathName == preLocation.pathname);
-        // if (preEventIndex === -1 || preEventIndex === this.eventStack.length - 1) {
-        //     this.senderInstance?.post(createBounceRateLogger(this, pathName))
-        // }
+    trackPV() {
+        console.info("如果要使用，请使用 PVPlugin 覆盖这个方法")
     }
 
     constructor(
@@ -95,7 +89,6 @@ class WebMonitor extends Monitor {
         new LongTimeTaskPlugin(this),
         new WebVitalsPlugin(this),
         new CrashPlugin(this),
-        new EventsPlugin(this),
         new RrwebPlugin(this)
     ]) {
         this.plugins = plugins;
@@ -105,6 +98,10 @@ class WebMonitor extends Monitor {
         window.__SNIPER__ = this
         this.plugins.forEach(plugin => plugin.init());
         this.plugins.forEach(plugin => plugin.run());
+    }
+
+    setUid(uid: string) {
+        this.uid = uid
     }
 }
 

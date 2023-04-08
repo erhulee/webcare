@@ -1,32 +1,30 @@
 
 // import {} from "web-vitals"
-import  WebMonitor  from "web/WebMonitor"
-import {Plugin} from "share/Plugin"
-import { createBrowserHistory } from "history"
-// import { captureNativeFn } from "web/utils/captureNativeFn.ts"
+import WebMonitor from "web/WebMonitor"
+import { Plugin } from "share/Plugin"
+import { PVLogger } from "web/logger"
 
-/*
-    history: popState 事件
-    hash: pushSate / replaceState 重写
-*/
+// PV探测在SDK方很难实现
+// plugin 覆盖 monitor 上的 TrackPV 方法，提供给开发者更好的 PV 上报体验
 
-export class PVPlugin implements Plugin{
-    instance:WebMonitor
-    constructor(instance:WebMonitor){
-        this.instance = instance
+export class PVPlugin implements Plugin {
+    monitor: WebMonitor
+    constructor(monitor: WebMonitor) {
+        this.monitor = monitor
     }
-    init(){
+    init() {
 
     }
-
-
-    async run(){
-       
+    run() {
+        this.monitor.trackPV = () => {
+            const uid = this.monitor.uid ?? "unknown";
+            const log = new PVLogger(uid);
+            this.monitor.send(log);
+        }
     }
-    unload(){
-       
-    }
+    unload() {
 
+    }
 }
 
 

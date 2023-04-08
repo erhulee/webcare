@@ -14,43 +14,6 @@ export enum ResourceType {
     Javascript = "script",
     Video = "video",
     Audio = "audio",
-
     Unknown = "unknown"
 }
-interface Logger {
-    category: LoggerCategory
-    type: StabilityType | PerformanceType
-}
 
-
-
-export class CrashLogger implements Logger {
-    category: "stability" = "stability"
-    type: "Collapse" = "Collapse"
-    constructor() { }
-}
-
-// export class LongTaskLogger implements Logger {
-//     category: "performance" = "performance"
-//     type: "LongTimeTask" = "LongTimeTask"
-//     startTime: number
-//     duration: number
-//     eventType: string
-//     eventName: string
-//     constructor(startTime: number, duration: number, eventType: string, eventName: string) {
-//         this.startTime = startTime;
-//         this.duration = duration;
-//         this.eventType = eventType;
-//         this.eventName = eventName
-//     }
-// }
-
-// export class WebVitalsLogger implements Logger {
-//     category: "performance" = "performance"
-//     type: "WebVitals" = "WebVitals"
-
-//     // webvitals: WebVital
-//     constructor() {
-//         // this.webvitals = webvitals
-//     }
-// }
