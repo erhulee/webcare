@@ -50,6 +50,9 @@ class WebMonitor extends Monitor {
         //     this.senderInstance?.post(createBounceRateLogger(this, pathName))
         // }
     }
+    send(data: any) {
+        this.senderInstance?.post(data);
+    }
     constructor(
         options: {
             appid: string,

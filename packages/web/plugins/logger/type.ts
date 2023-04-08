@@ -35,16 +35,6 @@ export class JSErrorLogger implements Logger {
 }
 
 
-export class HTTPErrorLogger implements Logger {
-    category: "stability" = "stability"
-    type: "HTTP" = "HTTP"
-    code: number
-    url: string
-    constructor(code: number, url: string) {
-        this.code = code;
-        this.url = url;
-    }
-}
 
 export class ResourceLogger implements Logger {
     category: "stability" = "stability"

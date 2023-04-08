@@ -54,6 +54,9 @@ export function createHTTPLogger(monitor: WebMonitor, response: XMLHttpRequest |
     }
 }
 
+export function createHTTPPerformanceLogger(monitor: WebMonitor, url: string, duration: number) {
+    return {}
+}
 export function createResourceLogger(monitor: WebMonitor, type: ResourceType, url: string, duration?: number) {
     const env = createBaseLogger(monitor);
     if (!Boolean(type) || !Boolean(url)) return null

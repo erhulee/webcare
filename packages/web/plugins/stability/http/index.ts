@@ -1,63 +1,72 @@
-import { createHTTPLogger } from "../../logger/index";
-import  WebMonitor  from "web/WebMonitor"
-import {Plugin} from "share/Plugin"
-import {isStatusOk} from "../../../util";
+import WebMonitor from "web/WebMonitor"
+import { Plugin } from "share/Plugin"
+import { isStatusOk } from "../../../util";
+import { HTTPPerformanceLogger, HTTPErrorLogger } from "web/plugins/logger/factory";
 
 
 export class HTTPPlugin implements Plugin {
-    // monitor:WebMonitor
-    instance: WebMonitor;
-    nativeXHRSend?:any
-    nativeFetch?:any
-    duringHijack:boolean
-    constructor(monitor:WebMonitor){
-        this.instance = monitor
-        this.duringHijack = false
+    monitor: WebMonitor;
+    nativeXHRSend?: any
+    nativeFetch?: any
+    constructor(monitor: WebMonitor) {
+        this.monitor = monitor
     }
-
-    init(){}
-    run(){
+    init() { }
+    run() {
         const instance = this
         /* xhr 劫持 */
         this.nativeXHRSend = XMLHttpRequest.prototype.send;
-        XMLHttpRequest.prototype.send = function(...arg){
+        XMLHttpRequest.prototype.send = function (...arg) {
             let self = this;
-            self.addEventListener("abort", function(){
-                // TODO abort 以后再说
-                // const logger = createHTTPLogger("absort", "", {});
-                // instance.monitor.senderInstance?.post(logger)
-            })
-            self.addEventListener("readystatechange", function(){
-                if(this.readyState == 4 && !isStatusOk(this.status)){
-                    const logger = createHTTPLogger(instance.instance, this, "XHR")
-                    instance.instance.senderInstance?.post(logger)
+            const startTime = Date.now();
+            self.addEventListener("readystatechange", function () {
+                const url = this.responseURL;
+                if (this.readyState == 4 && !isStatusOk(this.status)) {
+                    // 报错
+                    const code = this.status
+                    const logger = new HTTPErrorLogger(code, url)
+                    instance.monitor.send(logger)
+                } else {
+                    // 测速
+                    const duration = Date.now().valueOf() - startTime.valueOf();
+                    const logger = new HTTPPerformanceLogger(duration, url)
+                    instance.monitor.send(logger)
                 }
             })
             instance.nativeXHRSend.apply(self, arg)
         }
+
         /* fetch 劫持 */
-        if(!window.fetch) return;
+        if (!window.fetch) return;
         this.nativeFetch = fetch
-        window._fetch = window.fetch
-        window.fetch = function(...arg){
-            const promise = (window as any)._fetch(...arg);
-            promise.then((response:Response)=>{
-                console.log("res:", response)
-                if(response.ok){
+        const that = this;
+
+        window.fetch = function (...arg) {
+            const promise = that.nativeFetch._fetch(...arg);
+            const startTime = Date.now();
+            promise.then((response: Response) => {
+                if (response.ok) {
+                    // 测速
+                    const duration = Date.now().valueOf() - startTime.valueOf();
+                    const url = response.url;
+                    const logger = new HTTPPerformanceLogger(duration, url);
+                    that.monitor.send(logger);
+                } else {
                     //TODO 观察怎么拿到需要的信息
-                    const logger = createHTTPLogger(instance.instance, response, "Fetch");
-                    instance.instance.senderInstance?.post(logger)
+                    const url = response.url;
+                    const statusCode = response.status;
+                    const logger = new HTTPErrorLogger(statusCode, url);
+                    that.monitor.send(logger)
                 }
-            }, (error:any)=>{
-                // TODO abort 以后再说
-                // const logger = createHTTPLogger("absort", "", {});
-                // instance.monitor.sender?.post(logger)
+            }, (error: any) => {
+                // 似乎不会出错
+
             })
             return promise;
         }
     }
-    unload(){
-	    XMLHttpRequest.prototype.send = this.nativeXHRSend
+    unload() {
+        XMLHttpRequest.prototype.send = this.nativeXHRSend
         window.fetch = this.nativeFetch
-	}
+    }
 }

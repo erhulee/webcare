@@ -1,8 +1,9 @@
 import { Monitor } from "./Monitor";
 
 export interface Plugin {
-    instance: any;
-    init:   Function;
-    run:    Function;
+    instance?: any;
+    monitor?: any
+    init: Function;
+    run: Function;
     unload: Function;
 }
