@@ -21,7 +21,8 @@ export class CrashPlugin implements Plugin {
             type: "init",
             endpoint: this.monitor.endpoint,
             method: this.monitor.method,
-            logger: new CrashLogger()
+            logger: new CrashLogger(),
+            appid: this.monitor.appid
         })
 
         worker.addEventListener("message", (message) => {

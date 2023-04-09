@@ -16,10 +16,12 @@ let   isPost   = false;
 let   loggerBased = {};
 let   endpoint = "";
 let   method   = "";
-
+let   app      = ""'
 
 function post(){
     loggerBased.path = location.protocol + '//' + location.hostname + (location.port ? ':' + location.port : '') + location.pathname + location.search;
+    isPost = true;
+
     if(method == "get" || method == "GET"){
         const params = new URLSearchParams();
         const keys = Object.keys(loggerBased);
@@ -28,23 +30,24 @@ function post(){
         })
         fetch(endpoint+"?"+params, {
             method: method,
-        }).then(()=>{
-            isPost = true;
         })
     }else{
+
         fetch(endpoint, {
             method: method,
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify(loggerBased)
-        }).then(()=>{
-            isPost = true;
+            body: {
+                appid,
+                loggers: JSON.stringify(loggerBased)
+            }
         })
     }
 }
 function init(logger, _endpoint, _method){
     loggerBased = logger;
+    appid       = _appid
     endpoint    = _endpoint;
     method      = _method;
 }

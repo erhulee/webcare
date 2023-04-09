@@ -48,7 +48,6 @@ class XHRSender<Report extends { appid: string }> implements Sender<WebMonitor>{
             const xhr = new XMLHttpRequest();
             xhr.open(that.method, that.endpoint);
             xhr.setRequestHeader("Content-Type", 'application/json');
-            console.log(this.instance.nativeXHRSend, JSON.stringify(body))
             this.instance.nativeXHRSend?.call(xhr, JSON.stringify(body))
             xhr.addEventListener("readystatechange", function () {
                 if (this.readyState == 4) {

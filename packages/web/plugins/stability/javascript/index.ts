@@ -13,17 +13,19 @@ export class JSErrorPlugin implements Plugin {
     init() {
         this.error_listener = (e: ErrorEvent) => {
             const log = new JSErrorLogger(e.message, e.error?.stack, this.monitor.rrwebStack)
-            console.log(e)
             this.monitor.send(log)
         }
         this.promise_listener = (e: ErrorEvent) => {
             // if ((e as any).target.localname !== undefined) return;
-            console.log(e)
             const log = new PromiseErrorLogger(e.message, e.error?.stack, this.monitor.rrwebStack)
             this.monitor.send(log)
         }
     }
     run() {
+        this.monitor.trackJSError = (e: Error) => {
+            const log = new JSErrorLogger(e.message, e?.stack || "", this.monitor.rrwebStack)
+            this.monitor.send(log)
+        }
         window.addEventListener("error", this.error_listener)
         window.addEventListener("unhandledrejection", this.promise_listener)
     }

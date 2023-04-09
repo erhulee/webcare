@@ -2724,7 +2724,7 @@ class XHRSender {
         this.origin_threshold = threshold;
         this.cache = [];
     }
-    _post() {
+    real_post() {
         const that = this;
         const data = this.cache;
         const body = {
@@ -2736,7 +2736,6 @@ class XHRSender {
             const xhr = new XMLHttpRequest();
             xhr.open(that.method, that.endpoint);
             xhr.setRequestHeader("Content-Type", 'application/json');
-            console.log(this.instance.nativeXHRSend, JSON.stringify(body));
             (_a = this.instance.nativeXHRSend) === null || _a === void 0 ? void 0 : _a.call(xhr, JSON.stringify(body));
             xhr.addEventListener("readystatechange", function () {
                 if (this.readyState == 4) {
@@ -2763,7 +2762,7 @@ class XHRSender {
             return Promise.resolve("cache success");
         }
         else {
-            return this._post();
+            return this.real_post();
         }
     }
 }
@@ -2908,18 +2907,20 @@ class JSErrorPlugin {
         this.error_listener = (e) => {
             var _a;
             const log = new JSErrorLogger(e.message, (_a = e.error) === null || _a === void 0 ? void 0 : _a.stack, this.monitor.rrwebStack);
-            console.log(e);
             this.monitor.send(log);
         };
         this.promise_listener = (e) => {
             var _a;
             // if ((e as any).target.localname !== undefined) return;
-            console.log(e);
             const log = new PromiseErrorLogger(e.message, (_a = e.error) === null || _a === void 0 ? void 0 : _a.stack, this.monitor.rrwebStack);
             this.monitor.send(log);
         };
     }
     run() {
+        this.monitor.trackJSError = (e) => {
+            const log = new JSErrorLogger(e.message, (e === null || e === void 0 ? void 0 : e.stack) || "", this.monitor.rrwebStack);
+            this.monitor.send(log);
+        };
         window.addEventListener("error", this.error_listener);
         window.addEventListener("unhandledrejection", this.promise_listener);
     }
@@ -3127,7 +3128,7 @@ let   isPost   = false;
 let   loggerBased = {};
 let   endpoint = "";
 let   method   = "";
-
+let   app      = ""'
 
 function post(){
     loggerBased.path = location.protocol + '//' + location.hostname + (location.port ? ':' + location.port : '') + location.pathname + location.search;
@@ -3148,7 +3149,10 @@ function post(){
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify(loggerBased)
+            body: {
+                appid,
+                loggers: JSON.stringify(loggerBased)
+            }
         }).then(()=>{
             isPost = true;
         })
@@ -3156,6 +3160,7 @@ function post(){
 }
 function init(logger, _endpoint, _method){
     loggerBased = logger;
+    appid       = _appid
     endpoint    = _endpoint;
     method      = _method;
 }
@@ -3208,7 +3213,8 @@ class CrashPlugin {
             type: "init",
             endpoint: this.monitor.endpoint,
             method: this.monitor.method,
-            logger: new CrashLogger()
+            logger: new CrashLogger(),
+            appid: this.monitor.appid
         });
         worker.addEventListener("message", (message) => {
             const data = message.data;
@@ -7225,6 +7231,9 @@ function getDid() {
     });
 }
 class WebMonitor extends Monitor {
+    trackJSError(error) {
+        console.info("如果要使用，请使用 PVPlugin 覆盖这个方法");
+    }
     trackPV() {
         console.info("如果要使用，请使用 PVPlugin 覆盖这个方法");
     }

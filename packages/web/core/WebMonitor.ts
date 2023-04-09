@@ -46,6 +46,9 @@ class WebMonitor extends Monitor {
     // plugins: Plugin[] = []
     // 插件会重写，此处只是作为类型定义
     trackLog?: (...arg: any[]) => void;
+    trackJSError(error: Error) {
+        console.info("如果要使用，请使用 PVPlugin 覆盖这个方法")
+    }
     trackPV() {
         console.info("如果要使用，请使用 PVPlugin 覆盖这个方法")
     }
