@@ -1,11 +1,10 @@
-import { Monitor } from "../share/Monitor";
 import FingerprintJS from '@fingerprintjs/fingerprintjs'
 import { BeaconSender, XHRSender } from "./Sender";
-import { Plugin } from "share/Plugin"
-import { CrashPlugin, HTTPPlugin, JSErrorPlugin, ResourcePlugin } from "./plugins/stability/index";
-import { LongTimeTaskPlugin, WebVitalsPlugin } from "./plugins/performance/index";
-import { Sender } from "../share/Sender";
-import { RrwebPlugin } from "./plugins/behavior/rrweb";
+import { Monitor, Plugin } from "share/index"
+import { CrashPlugin, HTTPPlugin, JSErrorPlugin, ResourcePlugin } from "../plugins/stability/index";
+import { LongTimeTaskPlugin, WebVitalsPlugin } from "../plugins/performance/index";
+import { Sender } from "share/Sender";
+import { RrwebPlugin } from "plugins/behavior/rrweb";
 const DEFAULT_LONGTASK_TIME = 50;
 const DEFAULT_ENDPOINT = "https://bdul0j.laf.dev/logger"
 type WebSenderType = "xhr" | "beacon";

@@ -1,4 +1,4 @@
-import WebMonitor from "web/WebMonitor"
+import WebMonitor from "web/core/WebMonitor"
 import { Plugin } from "share/Plugin"
 import { work_source } from "./webwork"
 import { CrashLogger } from "web/logger"

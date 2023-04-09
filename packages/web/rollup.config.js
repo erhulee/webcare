@@ -23,7 +23,7 @@ export default {
                 resolve: ['.tsx', '.ts'],
                 entries: [
                     { find: "web",   replacement:  path.resolve(__dirnameNew, "./")},
-                    { find: "share", replacement:  "../share"},
+                    { find: "share", replacement:  path.resolve(__dirnameNew, "../share")},
                 ]
             }),
             npm(),

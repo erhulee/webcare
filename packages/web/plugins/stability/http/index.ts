@@ -1,9 +1,10 @@
-import WebMonitor from "web/WebMonitor"
+import WebMonitor from "web/core/WebMonitor"
 import { Plugin } from "share/Plugin"
-import { isStatusOk } from "../../../util";
 import { HTTPPerformanceLogger, HTTPErrorLogger } from "web/logger/index";
 
-
+function isStatusOk(status: number) {
+    return !(status >= 400 && status < 600)
+}
 export class HTTPPlugin implements Plugin {
     monitor: WebMonitor;
     nativeXHRSend?: any

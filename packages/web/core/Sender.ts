@@ -1,8 +1,8 @@
-import { Monitor } from "../share/Monitor";
-import { isStatusOk } from "./util";
 import WebMonitor from "./WebMonitor";
-import { Sender } from "../share/Sender"
-
+import { Sender } from "share/Sender"
+function isStatusOk(status: number) {
+    return !(status >= 400 && status < 600)
+}
 const KEY = "__Web_Monitor_List__"
 class BeaconSender<Report> implements Sender<WebMonitor>{
     endpoint: string;

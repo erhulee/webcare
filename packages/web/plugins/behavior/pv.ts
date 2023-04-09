@@ -1,6 +1,6 @@
 
 // import {} from "web-vitals"
-import WebMonitor from "web/WebMonitor"
+import WebMonitor from "web/core/WebMonitor"
 import { Plugin } from "share/Plugin"
 import { PVLogger } from "web/logger"
 

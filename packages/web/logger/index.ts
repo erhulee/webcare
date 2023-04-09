@@ -1,4 +1,4 @@
-import WebMonitor from "web/WebMonitor";
+import WebMonitor from "web/core/WebMonitor";
 import { ResourceType } from "./type";
 
 // export function createBounceRateLogger(monitor: WebMonitor, pathname: string, search: string = "") {

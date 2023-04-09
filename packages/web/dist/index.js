@@ -71,27 +71,6 @@ function __spreadArrays() {
     return r;
 }
 
-class Monitor {
-    constructor(appid, endpoint, method, sample_rate = 0.5) {
-        this.plugins = [];
-        this.appid = appid;
-        this.endpoint = endpoint;
-        this.method = method;
-        if (sample_rate > 1) {
-            this.sample_rate = 1;
-        }
-        else if (sample_rate < 0) {
-            this.sample_rate = 0;
-        }
-        else {
-            this.sample_rate = sample_rate;
-        }
-    }
-    initSender() {
-        console.error("需要重写 InitSender 方法");
-    }
-}
-
 /**
  * FingerprintJS v3.3.6 - Copyright (c) FingerprintJS, Inc, 2022 (https://fingerprint.com)
  * Licensed under the MIT (http://www.opensource.org/licenses/mit-license.php) license.
@@ -2722,10 +2701,9 @@ function load(_a) {
 // It should contain all the public exported values.
 var index = { load: load, hashComponents: hashComponents, componentsToDebugString: componentsToDebugString };
 
-function isStatusOk(status) {
+function isStatusOk$1(status) {
     return !(status >= 400 && status < 600);
 }
-
 const KEY = "__Web_Monitor_List__";
 class BeaconSender {
     constructor(endpoint, instance) {
@@ -2762,7 +2740,7 @@ class XHRSender {
             (_a = this.instance.nativeXHRSend) === null || _a === void 0 ? void 0 : _a.call(xhr, JSON.stringify(body));
             xhr.addEventListener("readystatechange", function () {
                 if (this.readyState == 4) {
-                    if (isStatusOk(this.status)) {
+                    if (isStatusOk$1(this.status)) {
                         if (that.threshold !== that.origin_threshold)
                             that.threshold /= 2;
                         that.cache = [];
@@ -2789,6 +2767,33 @@ class XHRSender {
         }
     }
 }
+
+class Monitor {
+    constructor(appid, endpoint, method, sample_rate = 0.5) {
+        this.plugins = [];
+        this.appid = appid;
+        this.endpoint = endpoint;
+        this.method = method;
+        if (sample_rate > 1) {
+            this.sample_rate = 1;
+        }
+        else if (sample_rate < 0) {
+            this.sample_rate = 0;
+        }
+        else {
+            this.sample_rate = sample_rate;
+        }
+    }
+    initSender() {
+        console.error("需要重写 InitSender 方法");
+    }
+}
+
+var HTTPMethod;
+(function (HTTPMethod) {
+    HTTPMethod["post"] = "post";
+    HTTPMethod["get"] = "get";
+})(HTTPMethod || (HTTPMethod = {}));
 
 // export function createBounceRateLogger(monitor: WebMonitor, pathname: string, search: string = "") {
 //     const env = createBaseLogger(monitor);
@@ -2924,6 +2929,9 @@ class JSErrorPlugin {
     }
 }
 
+function isStatusOk(status) {
+    return !(status >= 400 && status < 600);
+}
 class HTTPPlugin {
     constructor(monitor) {
         this.monitor = monitor;

@@ -1,6 +1,6 @@
 
 import { onCLS, onFID, onLCP, onFCP, onTTFB } from 'web-vitals';
-import WebMonitor from "web/WebMonitor"
+import WebMonitor from "web/core/WebMonitor"
 import { Plugin } from "share/Plugin"
 import { WebVitalLogger } from "web/logger/index"
 

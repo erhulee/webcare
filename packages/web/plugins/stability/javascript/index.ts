@@ -1,4 +1,4 @@
-import WebMonitor from "web/WebMonitor";
+import WebMonitor from "web/core/WebMonitor";
 import { Plugin } from "share/Plugin"
 import { JSErrorLogger, PromiseErrorLogger } from "web/logger";
 
