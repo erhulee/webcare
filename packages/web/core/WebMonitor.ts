@@ -5,6 +5,7 @@ import { CrashPlugin, HTTPPlugin, JSErrorPlugin, ResourcePlugin } from "../plugi
 import { LongTimeTaskPlugin, WebVitalsPlugin } from "../plugins/performance/index";
 import { Sender } from "share/Sender";
 import { RrwebPlugin } from "plugins/behavior/rrweb";
+import { PVPlugin } from 'web/plugins/behavior/pv';
 const DEFAULT_LONGTASK_TIME = 50;
 const DEFAULT_ENDPOINT = "https://bdul0j.laf.dev/logger"
 type WebSenderType = "xhr" | "beacon";
@@ -20,6 +21,8 @@ type SenderOption = {
     senderType: "xhr"
 })
 
+const waitLoggerQueue: any[] = [];
+
 async function getDid() {
     const fpPromise = FingerprintJS.load()
     const fp = await fpPromise;
@@ -32,6 +35,7 @@ class WebMonitor extends Monitor {
     longtask_time
     // did -> 浏览器指纹
     fingerprint: string = "unknown";
+    waitUidFilled: boolean
     // uid -> 运行时注入，存在 uid 为空的情况，
     uid?: string
     // 发送器实例 sender 处理存储/压缩之类的具体逻辑，plugin 在发送数据的时候，会将后续控制权交给 sender 
@@ -59,22 +63,34 @@ class WebMonitor extends Monitor {
             appid: string,
             sample_rate?: number
             plugins?: Plugin[]
+            waitUidFilled?: boolean
         } & SenderOption
     ) {
         super(options.appid, options.endpoint || DEFAULT_ENDPOINT, options.method, options.sample_rate);
-        const { method, senderType, threshold = 1, endpoint, longtask_time = DEFAULT_LONGTASK_TIME } = options;
+        const { method, senderType, threshold = 1, endpoint, longtask_time = DEFAULT_LONGTASK_TIME, waitUidFilled = false } = options;
+        this.waitUidFilled = waitUidFilled
         this.longtask_time = longtask_time
         getDid().then(did => this.fingerprint = did)
         this.initSender(senderType, method, endpoint || DEFAULT_ENDPOINT, threshold);
         this.initPlugins(options.plugins);
     }
 
-    // 频控 / 检查
+    // 频控 / 检查 / uid
     send(data: any) {
         if (data == null) return;
         // 暂定频控
         if (Math.random() > this.sample_rate) return;
-        this.senderInstance?.post(data);
+        if (!this.waitUidFilled) {
+            this.senderInstance?.post(data);
+        } else {
+            const hasUid = Boolean(this.uid) || this.uid !== "unknown"
+            if (hasUid) {
+                const postData = waitLoggerQueue.map(log => ({ ...log, uid: this.uid })).concat(data);
+                this.senderInstance?.post(postData);
+            } else {
+                waitLoggerQueue.push(data);
+            }
+        }
     }
 
 
@@ -93,7 +109,8 @@ class WebMonitor extends Monitor {
         new LongTimeTaskPlugin(this),
         new WebVitalsPlugin(this),
         new CrashPlugin(this),
-        new RrwebPlugin(this)
+        new RrwebPlugin(this),
+        new PVPlugin(this)
     ]) {
         this.plugins = plugins;
     }
