@@ -1,6 +1,6 @@
 {
   "name": "sniper-web",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "main": "dist/index.js",
   "license": "MIT",
   "type": "module",
@@ -8,6 +8,7 @@
     "dev": "rollup -c -w",
     "build": "rollup -c"
   },
+  "sideEffects": false,
   "dependencies": {
     "@babel/core": "^7.20.5",
     "@babel/preset-env": "^7.20.2",

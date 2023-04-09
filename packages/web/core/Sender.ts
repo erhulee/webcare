@@ -37,7 +37,7 @@ class XHRSender<Report extends { appid: string }> implements Sender<WebMonitor>{
         this.origin_threshold = threshold;
         this.cache = []
     }
-    private _post(): Promise<any> {
+    private real_post(): Promise<any> {
         const that = this;
         const data = this.cache;
         const body = {
@@ -74,7 +74,7 @@ class XHRSender<Report extends { appid: string }> implements Sender<WebMonitor>{
             localStorage.setItem(KEY, JSON.stringify(this.cache))
             return Promise.resolve("cache success");
         } else {
-            return this._post();
+            return this.real_post();
         }
     }
 }
