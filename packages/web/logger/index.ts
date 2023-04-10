@@ -150,3 +150,12 @@ export class PVLogger extends BehaviorBaseLogger {
     }
 }
 
+export class BounceRateLogger extends BehaviorBaseLogger {
+    type: "BounceRate" = "BounceRate"
+    path: string
+    constructor(path: string) {
+        super();
+        this.path = path
+    }
+}
+

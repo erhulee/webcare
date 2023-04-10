@@ -16,10 +16,12 @@ export class PVPlugin implements Plugin {
 
     }
     run() {
+        const _trackPV = this.monitor.trackPV;
         this.monitor.trackPV = () => {
             const uid = this.monitor.uid ?? "unknown";
             const log = new PVLogger(uid);
             this.monitor.send(log);
+            _trackPV.call(this.monitor);
         }
     }
     unload() {

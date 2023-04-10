@@ -19,9 +19,11 @@ export class Monitor {
             this.sample_rate = sample_rate
         }
     }
+    run() { }
     // only for web
     initSender(senderType: WebSenderType, senderMethod: "get" | "post", endpoint: string, threshold: number): void;
     initSender(): void {
         console.error("需要重写 InitSender 方法")
     }
+    destroy() { }
 }

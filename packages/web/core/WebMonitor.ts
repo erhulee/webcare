@@ -6,6 +6,8 @@ import { LongTimeTaskPlugin, WebVitalsPlugin } from "../plugins/performance/inde
 import { Sender } from "share/Sender";
 import { RrwebPlugin } from "plugins/behavior/rrweb";
 import { PVPlugin } from 'web/plugins/behavior/pv';
+import { EventsPlugin } from 'web/plugins/behavior/events';
+import { BounceRatePlugin } from 'web/plugins/behavior/bounce-rate';
 const DEFAULT_LONGTASK_TIME = 50;
 const DEFAULT_ENDPOINT = "https://bdul0j.laf.dev/logger"
 type WebSenderType = "xhr" | "beacon";
@@ -117,19 +119,25 @@ class WebMonitor extends Monitor {
         new WebVitalsPlugin(this),
         new CrashPlugin(this),
         new RrwebPlugin(this),
-        new PVPlugin(this)
+        new PVPlugin(this),
+        new EventsPlugin(this),
+        new BounceRatePlugin(this)
     ]) {
         this.plugins = plugins;
     }
 
     async start() {
         window.__SNIPER__ = this
-        this.plugins.forEach(plugin => plugin.init());
+        this.plugins.forEach(plugin => plugin.init && plugin.init());
         this.plugins.forEach(plugin => plugin.run());
     }
 
     setUid(uid: string) {
         this.uid = uid
+    }
+
+    destroy() {
+        this.plugins.forEach(plugin => plugin.unload && plugin.unload())
     }
 }
 
