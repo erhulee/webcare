@@ -8,7 +8,7 @@ import { RrwebPlugin } from "plugins/behavior/rrweb";
 import { PVPlugin } from 'web/plugins/behavior/pv';
 import { EventsPlugin } from 'web/plugins/behavior/events';
 import { BounceRatePlugin } from 'web/plugins/behavior/bounce-rate';
-import hash from "object-hash"
+import { encode, decode } from 'js-base64';
 const DEFAULT_LONGTASK_TIME = 50;
 const DEFAULT_ENDPOINT = "https://bdul0j.laf.dev/logger"
 type WebSenderType = "xhr" | "beacon";
@@ -86,7 +86,7 @@ class WebMonitor extends Monitor {
         // 暂定频控
         if (Math.random() > this.sample_rate) return;
         // hash去除重复
-        const hash_key = hash(data);
+        const hash_key = encode(data);
         if (this.hash_set.has(hash_key)) return;
         this.hash_set.add(hash_key);
         // did 检查

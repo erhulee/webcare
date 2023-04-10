@@ -7,9 +7,7 @@ import path from "path"
 import { fileURLToPath } from 'url'
 
 const __filenameNew = fileURLToPath(import.meta.url)
-
 const __dirnameNew = path.dirname(__filenameNew)
-console.log(path.resolve(__dirnameNew))
 export default {
         input: 'index.ts',
         output: [
