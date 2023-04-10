@@ -29,7 +29,23 @@ const webmonitor = new WebMonitor({
 webmonitor.start();
 ```
 
-## 具体配置项
+## ⭐️ 支持特性
+
+- 错误捕获：代码报错、资源加载报错、接口请求报错
+- 性能数据：FCP、LCP、CLS、TTFB、FID、LongTask
+- 网络测速：接口测速、资源测速
+- 用户行为：跳出率
+- 页面崩溃：基于 worker 的心跳检测
+- 个性化指标：Long Task、Memory 页面内存、首屏加载时间
+- 日志容灾：localstorage 备份
+- 插件机制：所有特性都可以自定义选择
+- 支持的 Web 框架：React
+
+todo:
+1. 日志去重复
+2. 跳出率
+
+## 🎲 具体配置项
 
 ```typescript
 type Options = {
@@ -49,7 +65,7 @@ type Options = {
 | ------------- | --------------------------- | ----------------------------- |
 | appid         | 应用标识                    | / 【必填项】                  |
 | waitUidFilled | 是否等待 uid 获取后统一上报 | false                         |
-| longtask_time | longtask_time               | 10(ms)                        |
+| longtask_time | longtask_time               | 50(ms)                        |
 | sample_rate   | 采样频率, 要求 0-1 之间     | 0.5                           |
 | plugins       | 插件列表                    | 下面说明的全部插件            |
 | threshold     | 统一日志上报数量            | 20                            |
