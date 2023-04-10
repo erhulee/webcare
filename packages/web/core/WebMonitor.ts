@@ -8,6 +8,7 @@ import { RrwebPlugin } from "plugins/behavior/rrweb";
 import { PVPlugin } from 'web/plugins/behavior/pv';
 import { EventsPlugin } from 'web/plugins/behavior/events';
 import { BounceRatePlugin } from 'web/plugins/behavior/bounce-rate';
+import hash from "object-hash"
 const DEFAULT_LONGTASK_TIME = 50;
 const DEFAULT_ENDPOINT = "https://bdul0j.laf.dev/logger"
 type WebSenderType = "xhr" | "beacon";
@@ -33,6 +34,7 @@ async function getDid() {
 }
 
 class WebMonitor extends Monitor {
+    private hash_set: Set<string> = new Set<string>()
     // 长任务阈值
     longtask_time
     // did -> 浏览器指纹
@@ -78,10 +80,15 @@ class WebMonitor extends Monitor {
     }
 
     // 频控 / 检查 / uid
+    // data 不许是 array，呜呜呜
     send(data: any) {
         if (data == null) return;
         // 暂定频控
         if (Math.random() > this.sample_rate) return;
+        // hash去除重复
+        const hash_key = hash(data);
+        if (this.hash_set.has(hash_key)) return;
+        this.hash_set.add(hash_key);
         // did 检查
         // did 检查合法
         if (!(this.fingerprint || this.fingerprint !== "unknown")) {

@@ -44,7 +44,6 @@ webmonitor.start();
 todo:
 
 1. 日志去重复
-2. 跳出率
 
 ## 🎲 具体配置项
 
