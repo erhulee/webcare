@@ -11,7 +11,7 @@ export class EventsPlugin implements Plugin {
     instance: WebMonitor
     eventKeys = ["click", "input", "keydown", "keyup"]
     collectEventHandle = (e: any) => {
-        const pathName = location.pathname;
+        const pathName = location.href;
         while (this.instance.eventStack.length >= 20) {
             this.instance.eventStack.shift();
         }

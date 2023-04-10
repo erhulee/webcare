@@ -42,6 +42,7 @@ webmonitor.start();
 - 支持的 Web 框架：React
 
 todo:
+
 1. 日志去重复
 2. 跳出率
 
@@ -75,15 +76,17 @@ type Options = {
 
 ### 已经内置实现的插件
 
-| 插件名称           | 作用               | 注意事项                                                  |
-| ------------------ | ------------------ | --------------------------------------------------------- |
-| RrwebPlugin        | 现场录制插件       | 取消配置后，将不再上传用户行为录像， 适合有安全要求的项目 |
-| CrashPlugin        | 页面崩溃           |                                                           |
-| HTTPPlugin         | 网络接口错误和测速 |                                                           |
-| JSErrorPlugin      | 运行时错误         |                                                           |
-| ResourcePlugin     | 资源错误和测速     |                                                           |
-| LongTimeTaskPlugin | 长任务监测         |                                                           |
-| WebVitalsPlugin    | webvital 指标检测  |                                                           |
+| 插件名称           | 作用               | 注意事项                                                            |
+| ------------------ | ------------------ | ------------------------------------------------------------------- |
+| RrwebPlugin        | 现场录制插件       | 取消配置后，将不再上传用户行为录像， 适合有安全要求的项目           |
+| CrashPlugin        | 页面崩溃           |                                                                     |
+| HTTPPlugin         | 网络接口错误和测速 |                                                                     |
+| JSErrorPlugin      | 运行时错误         |                                                                     |
+| ResourcePlugin     | 资源错误和测速     |                                                                     |
+| LongTimeTaskPlugin | 长任务监测         |                                                                     |
+| WebVitalsPlugin    | webvital 指标检测  |                                                                     |
+| EventsPlugin       | 用户行为数据记录   | 不会上报，作为其他 plugin 的数据源，会把数据存到 Monitor.eventStack |
+| BounceRatePlugin   | 页面跳出率         | 页面跳出率，依赖 Monitor.eventStack                                 |
 
 注意: 如果有自定义的插件，例如 CustomPlugin, 需要将默认的插件全部 import 一遍
 
