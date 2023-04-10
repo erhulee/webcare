@@ -29,7 +29,19 @@ const webmonitor = new WebMonitor({
 webmonitor.start();
 ```
 
-## 具体配置项
+## ⭐️ 支持特性
+
+- 错误捕获：代码报错、资源加载报错、接口请求报错
+- 性能数据：FCP、LCP、CLS、TTFB、FID、LongTask
+- 网络测速：接口测速、资源测速
+- 用户行为：PV、跳出率
+- 页面崩溃：基于 worker 的心跳检测
+- 个性化指标：Long Task、Memory 页面内存、首屏加载时间
+- 日志容灾：localstorage 备份
+- 插件机制：所有特性都可以自定义选择
+- 支持的 Web 框架：React
+
+## 🎲 具体配置项
 
 ```typescript
 type Options = {
