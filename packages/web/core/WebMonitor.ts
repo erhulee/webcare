@@ -80,16 +80,23 @@ class WebMonitor extends Monitor {
         if (data == null) return;
         // 暂定频控
         if (Math.random() > this.sample_rate) return;
-        if (!this.waitUidFilled) {
-            this.senderInstance?.post(data);
-        } else {
-            const hasUid = Boolean(this.uid) || this.uid !== "unknown"
-            if (hasUid) {
-                const postData = waitLoggerQueue.map(log => ({ ...log, uid: this.uid })).concat(data);
-                this.senderInstance?.post(postData);
+        // did 检查
+        // did 检查合法
+        if (!(this.fingerprint || this.fingerprint !== "unknown")) {
+            if (!this.waitUidFilled) {
+                this.senderInstance?.post(data);
             } else {
-                waitLoggerQueue.push(data);
+                const hasUid = Boolean(this.uid) || this.uid !== "unknown"
+                if (hasUid) {
+                    const postData = waitLoggerQueue.map(log => ({ ...log, uid: this.uid })).concat(data);
+                    this.senderInstance?.post(postData);
+                } else {
+                    waitLoggerQueue.push(data);
+                }
             }
+            // did 不合法 -> 暂存
+        } else {
+            waitLoggerQueue.push(data)
         }
     }
 
