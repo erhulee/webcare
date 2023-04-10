@@ -1,4 +1,5 @@
 # sniper-sdk
-浏览器web -> packages/web
-微信小程序版本 还在调研和规划
+浏览器web版:packages/web
+
+微信小程序版:packages/wx-app
 
