@@ -86,12 +86,13 @@ class WebMonitor extends Monitor {
         // 暂定频控
         if (Math.random() > this.sample_rate) return;
         // hash去除重复
-        const hash_key = encode(data);
-        if (this.hash_set.has(hash_key)) return;
-        this.hash_set.add(hash_key);
+        // const hash_key = encode(data);
+        // console.log("hash keyP", hash_key)
+        // if (this.hash_set.has(hash_key)) return;
+        // this.hash_set.add(hash_key);
         // did 检查
         // did 检查合法
-        if (!(this.fingerprint || this.fingerprint !== "unknown")) {
+        if (!this.fingerprint || this.fingerprint !== "unknown") {
             if (!this.waitUidFilled) {
                 this.senderInstance?.post(data);
             } else {

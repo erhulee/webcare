@@ -1,5 +1,5 @@
 import { useContext, useEffect } from "react";
-import { useLocation } from "react-router";
+import { useLocation } from "react-router-dom";
 import { Context } from "./SniperOuter";
 export function usePvTrack() {
     const location = useLocation();

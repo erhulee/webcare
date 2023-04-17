@@ -61,7 +61,8 @@ export class ResourcePlugin implements Plugin {
                     } else {
                         // 如果成功的 -> 上报duration
                         const duration = entry.duration
-                        logger = new ResourcePerformanceLogger(tagName2ResourceType[type], url, duration);
+                        const { connectStart, connectEnd } = entry
+                        logger = new ResourcePerformanceLogger(tagName2ResourceType[type], url, duration, connectStart, connectEnd);
                     }
                     that.monitor.send(logger)
                 })

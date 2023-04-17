@@ -31,6 +31,6 @@ export default {
             babel({
                 exclude: "node_modules/**"
             }),
-            terser()
+            // terser()
         ]
     }

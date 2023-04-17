@@ -13,6 +13,7 @@ export class LongTimeTaskPlugin implements Plugin {
         const callback = (entryList: PerformanceObserverEntryList) => {
             entryList.getEntries().forEach((entry) => {
                 // 放宽界限
+                console.log(entry.duration)
                 if (entry.duration < this.monitor.longtask_time) return;
                 const { startTime, duration, entryType, name } = entry
                 const logger = new LongTaskLogger(startTime, duration, entryType, name)

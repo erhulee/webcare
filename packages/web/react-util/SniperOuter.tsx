@@ -8,11 +8,11 @@ class ErrorBound extends PureComponent {
     super(props);
   }
   componentDidCatch(error: Error) {
-    console.log("react error");
     const monitor = this.context as WebMonitor;
     if (monitor == null) return;
     monitor.trackJSError(error);
   }
+  static getDerivedStateFromError() {}
   render() {
     return (this.props as any).children;
   }

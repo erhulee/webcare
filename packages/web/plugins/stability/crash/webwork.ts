@@ -16,12 +16,13 @@ let   isPost   = false;
 let   loggerBased = {};
 let   endpoint = "";
 let   method   = "";
-let   app      = ""'
+let   app      = "";
 
 function post(){
     loggerBased.path = location.protocol + '//' + location.hostname + (location.port ? ':' + location.port : '') + location.pathname + location.search;
     isPost = true;
 
+    // 暂时不支持！！
     if(method == "get" || method == "GET"){
         const params = new URLSearchParams();
         const keys = Object.keys(loggerBased);
@@ -38,14 +39,14 @@ function post(){
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: {
+            body: JSON.stringify({
                 appid,
-                loggers: JSON.stringify(loggerBased)
-            }
+                logger: loggerBased
+            })
         })
     }
 }
-function init(logger, _endpoint, _method){
+function init(logger, _endpoint, _method, _appid){
     loggerBased = logger;
     appid       = _appid
     endpoint    = _endpoint;
@@ -58,7 +59,7 @@ self.onmessage = function(e){
     const type = data.type;
     switch(type){
         case "init":
-            init(data.logger, data.endpoint, data.method);
+            init(data.logger, data.endpoint, data.method, data.appid);
             break;
         case "sync":
             loggerBased.rrwebStack = data.rrwebStack;

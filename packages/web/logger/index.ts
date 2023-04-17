@@ -106,11 +106,15 @@ export class ResourcePerformanceLogger extends PerformanceBaseLogger {
     resourceType: ResourceType
     src: string
     duration: number
-    constructor(resourceType: ResourceType, src: string, duration: number) {
+    startDate: number
+    endDate: number
+    constructor(resourceType: ResourceType, src: string, duration: number, startDate: number, endDate: number) {
         super();
         this.resourceType = resourceType
         this.src = src
         this.duration = duration
+        this.startDate = startDate
+        this.endDate = endDate
     }
 }
 
