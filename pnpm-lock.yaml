@@ -84,7 +84,7 @@ importers:
       '@fingerprintjs/fingerprintjs': ^3.3.6
       '@rollup/plugin-alias': ^4.0.2
       '@rollup/plugin-typescript': ^10.0.1
-      '@sniper/core': workspace:^1.0.0
+      '@types/fingerprintjs': ^0.5.28
       '@types/react': ^18.0.33
       '@types/react-router-dom': ^5.3.3
       eslint: ^8.30.0
@@ -100,16 +100,18 @@ importers:
       rollup-plugin-terser: ^7.0.2
       rollup-plugin-typescript2: ^0.34.1
       rrweb: ^2.0.0-alpha.4
+      sniper-core: workspace:^1.0.4
       tslib: ^2.4.1
       typescript: ^4.9.4
       web-vitals: ^3.1.0
     dependencies:
-      '@sniper/core': link:../share
+      '@types/fingerprintjs': 0.5.28
       '@types/react-router-dom': 5.3.3
       js-base64: 3.7.5
       react: 18.2.0
       react-router-dom: 6.10.0_react@18.2.0
       rrweb: 2.0.0-alpha.4
+      sniper-core: link:../share
       web-vitals: 3.3.1
     devDependencies:
       '@babel/core': 7.21.4
@@ -2025,6 +2027,10 @@ packages:
 
   /@types/estree/1.0.0:
     resolution: {integrity: sha512-WulqXMDUTYAXCjZnk6JtIHPigp55cVtDgDrO2gHRwhyJto21+1zbVCtOYB2L1F9w4qCQ0rOGWBnBe0FNTiEJIQ==}
+
+  /@types/fingerprintjs/0.5.28:
+    resolution: {integrity: sha512-y4HGQNMocps8rj+S/2Q+qtVqI9XEE8ax2txSThPq9PHQq1ExLaShci31KAcLUtE+bczXEGeW8LzUqqwWlGk+KQ==}
+    dev: false
 
   /@types/history/4.7.11:
     resolution: {integrity: sha512-qjDJRrmvBMiTx+jyLxvLfJU7UznFuokDv4f3WRuriHKERccVpFU+8XMQUAbDzoiJCsmexxRExQeMwwCdamSKDA==}
