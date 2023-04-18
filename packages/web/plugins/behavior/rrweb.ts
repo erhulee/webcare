@@ -1,6 +1,6 @@
 
 import WebMonitor from "web/core/WebMonitor"
-import { Plugin } from "share/Plugin"
+import { Plugin } from "@sniper/core"
 import * as rrweb from "rrweb";
 export class RrwebPlugin implements Plugin {
     instance: WebMonitor

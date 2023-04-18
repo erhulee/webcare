@@ -1,9 +1,9 @@
 import FingerprintJS from '@fingerprintjs/fingerprintjs'
 import { BeaconSender, XHRSender } from "./Sender";
-import { Monitor, Plugin } from "share/index"
+import { Monitor, Plugin } from "@sniper/core"
 import { CrashPlugin, HTTPPlugin, JSErrorPlugin, ResourcePlugin } from "../plugins/stability/index";
 import { LongTimeTaskPlugin, WebVitalsPlugin } from "../plugins/performance/index";
-import { Sender } from "share/Sender";
+import { Sender } from "@sniper/core";
 import { RrwebPlugin } from "plugins/behavior/rrweb";
 import { PVPlugin } from 'web/plugins/behavior/pv';
 import { EventsPlugin } from 'web/plugins/behavior/events';

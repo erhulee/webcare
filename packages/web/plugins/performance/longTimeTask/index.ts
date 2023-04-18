@@ -1,5 +1,5 @@
 import WebMonitor from "web/core/WebMonitor"
-import { Plugin } from "share/Plugin"
+import { Plugin } from "@sniper/core"
 import { LongTaskLogger } from "web/logger/index"
 
 export class LongTimeTaskPlugin implements Plugin {

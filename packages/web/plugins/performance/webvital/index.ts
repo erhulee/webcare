@@ -1,7 +1,7 @@
 
 import { onCLS, onFID, onLCP, onFCP, onTTFB } from 'web-vitals';
 import WebMonitor from "web/core/WebMonitor"
-import { Plugin } from "share/Plugin"
+import { Plugin } from "@sniper/core"
 import { WebVitalLogger } from "web/logger/index"
 
 export class WebVitalsPlugin implements Plugin {

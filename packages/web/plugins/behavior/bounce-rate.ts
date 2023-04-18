@@ -1,6 +1,6 @@
 // 跳出率
 import WebMonitor from "web/core/WebMonitor"
-import { Plugin } from "share/Plugin"
+import { Plugin } from "@sniper/core"
 import { BounceRateLogger } from "web/logger";
 const DEFAULT_BOUNCE_RATE_EVENT_COUNT = 2;
 export class BounceRatePlugin implements Plugin {

@@ -1,5 +1,5 @@
 import WebMonitor from "web/core/WebMonitor"
-import { Plugin } from "share/Plugin"
+import { Plugin } from "@sniper/core"
 import { HTTPPerformanceLogger, HTTPErrorLogger } from "web/logger/index";
 
 function isStatusOk(status: number) {

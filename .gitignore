@@ -1,2 +1,3 @@
 node_modules/
-packages/web/dist/
+packages/share/dist
+packages/web/dist
