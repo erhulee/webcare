@@ -1,5 +1,4 @@
 import typescript from "rollup-plugin-typescript2"
-import {terser} from "rollup-plugin-terser"
 import babel from "rollup-plugin-babel"
 import alias from "@rollup/plugin-alias"
 import npm from "rollup-plugin-node-resolve"
@@ -21,7 +20,6 @@ export default {
                 resolve: ['.tsx', '.ts'],
                 entries: [
                     { find: "web",   replacement:  path.resolve(__dirnameNew, "./")},
-                    { find: "share", replacement:  path.resolve(__dirnameNew, "../share")},
                 ]
             }),
             npm(),

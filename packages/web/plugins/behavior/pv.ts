@@ -1,7 +1,7 @@
 
 // import {} from "web-vitals"
 import WebMonitor from "web/core/WebMonitor"
-import { Plugin } from "@sniper/core"
+import { Plugin } from "sniper-core"
 import { PVLogger } from "web/logger"
 
 // PV探测在SDK方很难实现

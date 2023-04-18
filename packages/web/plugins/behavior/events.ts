@@ -1,6 +1,6 @@
 
-import WebMonitor from "web/core/WebMonitor"
-import { Plugin } from "@sniper/core"
+import { Plugin } from "sniper-core"
+import WebMonitor from "../../index"
 
 /*
     history: popState 事件

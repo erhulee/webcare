@@ -1,5 +1,5 @@
 import WebMonitor from "web/core/WebMonitor";
-import { Plugin } from "@sniper/core"
+import { Plugin } from "sniper-core"
 import { JSErrorLogger, PromiseErrorLogger } from "web/logger";
 
 export class JSErrorPlugin implements Plugin {

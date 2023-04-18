@@ -1,7 +1,6 @@
 {
-  "name": "@sniper/web",
-  "version": "1.0.15",
-  "main": "dist/index.js",
+  "name": "sniper-web",
+  "version": "1.1.11",
   "license": "MIT",
   "type": "module",
   "scripts": {
@@ -10,13 +9,14 @@
   },
   "sideEffects": false,
   "dependencies": {
-    "@sniper/core": "workspace:^1.0.0",
+    "@types/fingerprintjs": "^0.5.28",
     "@types/react-router-dom": "^5.3.3",
     "js-base64": "^3.7.5",
-    "rrweb": "^2.0.0-alpha.4",
-    "web-vitals": "^3.1.0",
     "react": "^18.0.0",
-    "react-router-dom": "^6.6.0"
+    "react-router-dom": "^6.6.0",
+    "rrweb": "^2.0.0-alpha.4",
+    "sniper-core": "workspace:^1.0.4",
+    "web-vitals": "^3.1.0"
   },
   "devDependencies": {
     "@babel/core": "^7.20.5",
@@ -37,5 +37,13 @@
     "tslib": "^2.4.1",
     "typescript": "^4.9.4"
   },
-  "author": "erhulin"
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org/"
+  },
+  "types": "./dist/web/index.d.ts",
+  "main": "./dist/index.js",
+  "files": [
+    "dist"
+  ]
 }

@@ -1,6 +1,7 @@
 
 import WebMonitor from "web/core/WebMonitor";
-import { Plugin } from "@sniper/core"
+import { Plugin } from "sniper-core"
+import { buildAttributesObject } from "web/utils/buildAttributesObject"
 import { ResourceType } from "../../../logger/type";
 import { ResourceErrorLogger, ResourcePerformanceLogger } from "web/logger";
 function analyzeLinkType(attribute: { rel?: string, type?: string, href?: string, as?: string }) {

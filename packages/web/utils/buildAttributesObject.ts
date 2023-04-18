@@ -1,11 +1,7 @@
-type ArrayToObject<T extends readonly string[]> = {
-  [P in T[number]]?: any;
-};
-
-function buildAttributesObject<T extends readonly string[]>(
+export function buildAttributesObject<T extends readonly string[]>(
   attributes: NamedNodeMap,
   keys: T
-): ArrayToObject<T> {
+): any {
   return keys
     .map((key) => attributes.getNamedItem(key)?.nodeValue)
     .reduce((obj: any, curValue, index) => {

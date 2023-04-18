@@ -1,5 +1,5 @@
 import React, { PureComponent } from "react";
-import { WebMonitor } from "web/core";
+import { WebMonitor } from "../core";
 
 export const Context = React.createContext<WebMonitor | null>(null);
 class ErrorBound extends PureComponent {
