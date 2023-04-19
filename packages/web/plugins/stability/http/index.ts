@@ -44,7 +44,7 @@ export class HTTPPlugin implements Plugin {
         const that = this;
 
         window.fetch = function (...arg) {
-            const promise = that.nativeFetch._fetch(...arg);
+            const promise = that.nativeFetch(...arg);
             const startTime = Date.now();
             promise.then((response: Response) => {
                 if (response.ok) {
