@@ -41,9 +41,10 @@ webmonitor.start();
 - 插件机制：所有特性都可以自定义选择
 - 支持的 Web 框架：React
 
-TODO: 
-- 日志去除重复
+TODO:
 
+- 日志去除重复
+- Fetch 监控
 
 ## 🎲 具体配置项
 
