@@ -64,8 +64,8 @@ type Options = {
 
 | 参数名称      | 作用                        | 默认值                        |
 | ------------- | --------------------------- | ----------------------------- |
-| appid         | 应用标识                    | / 【必填项】                  |
-| waitUidFilled | 是否等待 uid 获取后统一上报 | false                         |
+| appid         | 应用标识                     | / 【必填项】                  |
+| waitUidFilled | 是否等待 uid 获取后统一上报   | false                         |
 | longtask_time | longtask_time               | 50(ms)                        |
 | sample_rate   | 采样频率, 要求 0-1 之间     | 0.5                           |
 | plugins       | 插件列表                    | 下面说明的全部插件            |
