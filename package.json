@@ -11,21 +11,23 @@
   },
   "sideEffects": false,
   "dependencies": {
+    "@types/lodash-es": "^4.17.10",
     "crypto": "^1.0.1",
     "js-base64": "^3.7.5",
+    "lodash-es": "^4.17.21",
     "rrweb": "^2.0.0-alpha.4",
     "uuid": "^9.0.0",
     "web-vitals": "^3.1.0"
   },
   "devDependencies": {
-    "@types/fingerprintjs": "^0.5.28",
-    "@types/uuid": "^9.0.1",
     "@babel/core": "^7.20.5",
     "@babel/preset-env": "^7.20.2",
     "@fingerprintjs/fingerprintjs": "^3.3.6",
     "@rollup/plugin-alias": "^4.0.2",
     "@rollup/plugin-typescript": "^10.0.1",
+    "@types/fingerprintjs": "^0.5.28",
     "@types/react": "^18.0.33",
+    "@types/uuid": "^9.0.1",
     "eslint": "^8.30.0",
     "eslint-plugin-prettier": "^4.2.1",
     "prettier": "^2.8.1",
@@ -42,8 +44,8 @@
     "access": "public",
     "registry": "https://registry.npmjs.org/"
   },
-  "types": "./dist/web/index.d.ts",
-  "main": "./dist/index.esm.js",
+  "types": "./dist/index.d.ts",
+  "main": "./dist/index.js",
   "files": [
     "dist"
   ]

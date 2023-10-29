@@ -1,4 +1,6 @@
-interface Sender {
+import { SniperLog } from "./log"
+
+export interface Sender {
     endpoint: string
-    send: (log: Log) => void
+    send: (log: SniperLog) => void
 }

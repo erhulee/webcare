@@ -5,5 +5,5 @@ export interface Plugin {
     monitor: Monitor
     run: () => void
     unload: () => void
-    events: () => Record<string, AnyFunc>
+    events?: () => Record<string, AnyFunc>
 }

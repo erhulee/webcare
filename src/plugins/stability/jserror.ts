@@ -1,8 +1,9 @@
 import { Monitor } from "src/runtime";
-import { AnyFunc } from "src/types/other";
 import { Plugin } from "../../types/plugin";
 import { connect } from "src/runtime/connect";
 import { LimitQueue } from "src/utils/LimitQueue";
+import createJSErrorLogger from "src/factory/jserror";
+import createPromiseLogger from "src/factory/unhandled_promise";
 
 @connect
 class JsErrorPlugin implements Plugin {
@@ -12,14 +13,11 @@ class JsErrorPlugin implements Plugin {
 
     run() {
         this.error_listener = (e: ErrorEvent) => {
-            console.log("js error")
-            // const log = new JSErrorLogger(e.message, e.error?.stack, this.rrwebQueue.value)
-            // this.monitor.send(log)
+            const { stack, message } = e.error
+            this.monitor.send(createJSErrorLogger({ stack, message }))
         }
         this.promise_listener = (e: ErrorEvent) => {
-            console.log("js promise error")
-            // const log = new PromiseErrorLogger(e.message, e.error?.stack, this.rrwebQueue.value)
-            // this.monitor.send(log)
+            this.monitor.send(createPromiseLogger({}))
         }
 
         window.addEventListener("error", this.error_listener)
@@ -41,7 +39,6 @@ class JsErrorPlugin implements Plugin {
     constructor(rrweb_size: number = 20) {
         this.rrwebQueue = new LimitQueue<any>(rrweb_size)
     }
-
-
-
 }
+
+export default JsErrorPlugin

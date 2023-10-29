@@ -1,7 +1,7 @@
 export const connect: ClassDecorator = (target: Function) => {
     Object.defineProperty(target.prototype, "monitor", {
         get() {
-            return window.__SNIPER__
+            return (window as any).__SNIPER__
         }
     })
 }
