@@ -9,8 +9,14 @@ class Monitor {
             owner: instance
         });
     }
-    getHijackFn(key) {
-        return this.hijackCache.get(key).fn;
+    getHijackFn(key, callback = () => { }) {
+        const hijackItem = this.hijackCache.get(key);
+        if (hijackItem == null) {
+            return callback;
+        }
+        else {
+            return this.hijackCache.get(key).fn;
+        }
     }
     releaseHijackFn(key) {
         debugger;
@@ -1356,13 +1362,21 @@ function InjectEnvironmentInfo(log) {
 }
 
 function createJSErrorLogger(params, monitor) {
-    const logger = Object.assign({ category: "stability", type: "js_error" }, params);
+    const logger = {
+        category: "stability",
+        type: "js_error",
+        detail: params
+    };
     InjectEnvironmentInfo(logger);
     return logger;
 }
 
 function createPromiseLogger(params, monitor) {
-    const logger = Object.assign({ category: "stability", type: "unhandled_promise" }, params);
+    const logger = {
+        category: "stability",
+        type: "unhandled_promise",
+        detail: params
+    };
     InjectEnvironmentInfo(logger);
     return logger;
 }
@@ -1405,7 +1419,11 @@ function buildQuery(path) {
 }
 
 function createHTTPErrorLogger(params, monitor) {
-    const logger = Object.assign({ category: "stability", type: "http" }, params);
+    const logger = {
+        category: "stability",
+        type: "http",
+        detail: params
+    };
     InjectEnvironmentInfo(logger);
     return logger;
 }
@@ -1489,12 +1507,79 @@ HTTPPlugin = __decorate([
 ], HTTPPlugin);
 var HTTPPlugin$1 = HTTPPlugin;
 
+function createResourceErrorLogger(params, monitor) {
+    const logger = {
+        category: "stability",
+        type: "resource",
+        detail: params
+    };
+    InjectEnvironmentInfo(logger);
+    return logger;
+}
+
+let ResourcePlugin = class ResourcePlugin {
+    constructor() {
+        this.listener = null;
+        this.performanceObserver = null;
+    }
+    run() {
+        const that = this;
+        if (typeof PerformanceObserver == "function") {
+            this.performanceObserver = new PerformanceObserver(((list, observer) => {
+                const entries = list.getEntriesByType("resource");
+                entries.forEach((entry) => {
+                    if (entry.initiatorType == "xmlhttprequest" || entry.transferSize !== 0)
+                        return;
+                    const url = entry.name;
+                    const log = createResourceErrorLogger({
+                        file_url: url
+                    });
+                    that.monitor.send(log);
+                });
+            }));
+            this.performanceObserver.observe({
+                entryTypes: ["resource"],
+            });
+        }
+        else {
+            this.listener = function (e) {
+                const target = e.target;
+                if (target == window)
+                    return;
+                const nodeName = target.nodeName;
+                if (nodeName == "LINK") {
+                    that.monitor.send(createResourceErrorLogger({
+                        file_url: "link"
+                    }));
+                }
+            };
+            window.addEventListener("error", this.listener, true);
+        }
+    }
+    unload() {
+        this.listener && window.removeEventListener("error", this.listener);
+    }
+};
+ResourcePlugin = __decorate([
+    connect
+], ResourcePlugin);
+var ResourcePlugin$1 = ResourcePlugin;
+
 let XHRSender = class XHRSender {
     get endpoint() {
         return this.monitor.endpoint;
     }
+    constructor(method) {
+        this.method = method;
+    }
     send(log) {
         console.log("[sniper sender]: send", log);
+        const origin_open = this.monitor.getHijackFn("open", XMLHttpRequest.prototype.open);
+        const origin_send = this.monitor.getHijackFn("send");
+        const xhr = new XMLHttpRequest();
+        origin_open.call(xhr, this.method, this.endpoint);
+        xhr.setRequestHeader("Content-Type", 'application/json');
+        origin_send.call(xhr, JSON.stringify(log));
     }
 };
 XHRSender = __decorate([
@@ -1502,4 +1587,4 @@ XHRSender = __decorate([
 ], XHRSender);
 var XHRSender$1 = XHRSender;
 
-export { HTTPPlugin$1 as HTTPPlugin, JsErrorPlugin$1 as JsErrorPlugin, Monitor, XHRSender$1 as XHRSender };
+export { HTTPPlugin$1 as HTTPPlugin, JsErrorPlugin$1 as JsErrorPlugin, Monitor, ResourcePlugin$1 as ResourcePlugin, XHRSender$1 as XHRSender };

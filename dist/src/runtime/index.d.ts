@@ -7,7 +7,7 @@ export declare class Monitor {
     private sender;
     private hijackCache;
     hijackFn(key: string, fn: (this: AnyObject, ...args: any[]) => any, instance: Record<string, any>): void;
-    getHijackFn(key: string): AnyFunc;
+    getHijackFn(key: string, callback?: AnyFunc): AnyFunc;
     releaseHijackFn(key: string): void;
     appid: string;
     endpoint: string;

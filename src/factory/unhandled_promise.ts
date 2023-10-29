@@ -5,7 +5,7 @@ export default function createPromiseLogger(params: {}, monitor?: Monitor) {
     const logger = {
         category: "stability",
         type: "unhandled_promise",
-        ...params
+        detail: params
     }
     InjectEnvironmentInfo(logger)
     return logger

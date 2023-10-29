@@ -8,7 +8,7 @@ export default function createJSErrorLogger(params: {
     const logger = {
         category: "stability",
         type: "js_error",
-        ...params
+        detail: params
     }
     InjectEnvironmentInfo(logger)
     return logger

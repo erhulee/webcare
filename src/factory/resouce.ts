@@ -1,19 +1,16 @@
 import { Monitor } from "src/runtime";
 import { InjectEnvironmentInfo } from "./base";
 
-export default function createHTTPErrorLogger(params: {
-    method?: "get" | "post" | "delete" | "put"
-    url: string,
-    query?: string,
-    body?: Record<string, any>
-    status: number;
-    status_text: string
+function createResourceErrorLogger(params: {
+    file_url: string
 }, monitor?: Monitor) {
     const logger = {
         category: "stability",
-        type: "http",
+        type: "resource",
         detail: params
     }
     InjectEnvironmentInfo(logger)
     return logger
 }
+
+export default createResourceErrorLogger

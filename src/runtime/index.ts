@@ -19,8 +19,13 @@ export class Monitor {
             owner: instance
         })
     }
-    getHijackFn(key: string) {
-        return this.hijackCache.get(key).fn as AnyFunc
+    getHijackFn(key: string, callback: AnyFunc = () => { }) {
+        const hijackItem = this.hijackCache.get(key);
+        if (hijackItem == null) {
+            return callback
+        } else {
+            return this.hijackCache.get(key).fn as AnyFunc
+        }
     }
 
     releaseHijackFn(key: string) {
