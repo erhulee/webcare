@@ -1,5 +1,6 @@
-import JsErrorPlugin from "src/plugins/stability/jserror";
+import { JsErrorPlugin, HTTPPlugin, ResourcePlugin } from "src/plugins/index";
 import { Monitor } from "../runtime";
+import { XHRSender } from "src/sender";
 
 const instance = new Monitor({
     appid: "ab123",
@@ -7,7 +8,9 @@ const instance = new Monitor({
 })
 
 instance.use([
-    new JsErrorPlugin(40)
+    new JsErrorPlugin(40),
+    new HTTPPlugin(),
+    new ResourcePlugin(),
 ])
 
-// instance.use()
+instance.use(new XHRSender("post"))

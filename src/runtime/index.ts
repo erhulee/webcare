@@ -7,7 +7,10 @@ export class Monitor {
     // 对外隐藏
     private sender!: Sender
     private hijackCache = new Map()
-
+    get sender_method() {
+        // 如果是 beacon sender，也需要规定 method 是 post，
+        return this.sender.method || "post"
+    }
     /* -- 劫持原生 api 三件套*/
     hijackFn(key: string, fn: (this: AnyObject, ...args: any[]) => any, instance: Record<string, any>) {
         const origin_fn = instance[key] as AnyFunc;

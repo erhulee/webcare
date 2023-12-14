@@ -6,6 +6,7 @@ export declare class Monitor {
     private event_bus;
     private sender;
     private hijackCache;
+    get sender_method(): import("../types/other").HTTPMethod;
     hijackFn(key: string, fn: (this: AnyObject, ...args: any[]) => any, instance: Record<string, any>): void;
     getHijackFn(key: string, callback?: AnyFunc): AnyFunc;
     releaseHijackFn(key: string): void;

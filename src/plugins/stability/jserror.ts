@@ -10,6 +10,7 @@ class JsErrorPlugin implements Plugin {
     monitor!: Monitor;
     error_listener: any;
     promise_listener: any;
+    rrwebQueue: LimitQueue<any>
 
     run() {
         this.error_listener = (e: ErrorEvent) => {
@@ -35,7 +36,7 @@ class JsErrorPlugin implements Plugin {
             }
         }
     }
-    rrwebQueue: LimitQueue<any>
+    //  屏幕录制buffer尺寸
     constructor(rrweb_size: number = 20) {
         this.rrwebQueue = new LimitQueue<any>(rrweb_size)
     }

@@ -1,4 +1,7 @@
 class Monitor {
+    get sender_method() {
+        return this.sender.method || "post";
+    }
     hijackFn(key, fn, instance) {
         const origin_fn = instance[key];
         instance[key] = function (...args) {
