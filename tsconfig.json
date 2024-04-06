@@ -1,29 +1,27 @@
 {
-  "include": ["**/*.ts", "**/*.tsx"],
+  "include": ["**/*.ts", "**/*.tsx", "modern.config.js"],
   "compilerOptions": {
     "isolatedModules": false,
     "jsx": "react",
-      "outDir": "esm",
-    "target": "es2016",                               /* Set the JavaScript language version for emitted JavaScript and include compatible library declarations. */
-    "module": "ESNext",                               /* Specify what module code is generated. */
-    "moduleResolution": "node",                       /* Specify how TypeScript looks up a file from a given module specifier. */
-    "baseUrl": "./",                                  /* Specify the base directory to resolve non-relative module names. */
-    "paths": {                                        /* Specify a set of entries that re-map imports to additional lookup locations. */
-      "@":["./src"],
-    },  
-    "removeComments": true, // 是否移除注释                        
+    "outDir": "esm",
+    "target": "es2016" /* Set the JavaScript language version for emitted JavaScript and include compatible library declarations. */,
+    "module": "ESNext" /* Specify what module code is generated. */,
+    "moduleResolution": "node" /* Specify how TypeScript looks up a file from a given module specifier. */,
+    "baseUrl": "./" /* Specify the base directory to resolve non-relative module names. */,
+    "paths": {
+      /* Specify a set of entries that re-map imports to additional lookup locations. */
+      "@": ["./src"]
+    },
+    "removeComments": true, // 是否移除注释
     "declaration": true,
-    "esModuleInterop": true,                             /* Emit additional JavaScript to ease support for importing CommonJS modules. This enables 'allowSyntheticDefaultImports' for type compatibility. */
-    "forceConsistentCasingInFileNames": true,            /* Ensure that casing is correct in imports. */
-    "strict": true,  
-    "experimentalDecorators": true,  
-    "alwaysStrict": false,                        // 以严格模式解析并为每个源文件生成 "use strict"语句 
-    "skipLibCheck": false                                 /* Skip type checking all .d.ts files. */
+    "esModuleInterop": true /* Emit additional JavaScript to ease support for importing CommonJS modules. This enables 'allowSyntheticDefaultImports' for type compatibility. */,
+    "forceConsistentCasingInFileNames": true /* Ensure that casing is correct in imports. */,
+    "strict": true,
+    "experimentalDecorators": true,
+    "alwaysStrict": false, // 以严格模式解析并为每个源文件生成 "use strict"语句
+    "skipLibCheck": false /* Skip type checking all .d.ts files. */
   },
   "rootDir": ".",
-  "baseUrl": "." ,
-  "exclude": [
-    "node_modules",
-    "dist"
-  ]
+  "baseUrl": ".",
+  "exclude": ["node_modules", "dist"]
 }

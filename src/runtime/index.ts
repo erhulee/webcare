@@ -1,6 +1,7 @@
 import { Plugin } from "../types/plugin"
 import { AnyFunc, AnyObject } from "../types/other"
 import { Sender } from "src/types/sender";
+import { Options } from "src/types/options";
 export class Monitor {
     private plugins: Plugin[] = [];
     private event_bus: Map<string, AnyFunc[]> = new Map();
