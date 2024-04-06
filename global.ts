@@ -6,5 +6,5 @@ declare global {
         WebMonitor: Monitor
         _fetch: (input: RequestInfo, init?: RequestInit | undefined) => Promise<Response>;
     }
-
 }
+

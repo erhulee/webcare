@@ -88,10 +88,10 @@ var timer = setInterval(()=>{
 }, 1000);
 `
 
-import { Monitor } from "src/runtime";
-import { Plugin } from "../../types/plugin";
-import { connect } from "src/runtime/connect";
-import { LimitQueue } from "src/utils/LimitQueue";
+import { Monitor } from "@/runtime";
+import { Plugin } from "@/types/plugin";
+import { connect } from "@/runtime/connect";
+import { LimitQueue } from "@/utils/LimitQueue";
 @connect
 class CrashPlugin implements Plugin {
     monitor!: Monitor;
