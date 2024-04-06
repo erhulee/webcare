@@ -1,7 +1,7 @@
 import { set } from "lodash-es";
-import { SniperLog } from "src/types/log";
+import { LoggerEnv } from "./interface";
 
-export function InjectEnvironmentInfo(log: Record<string, any>): void {
+export function InjectEnvironmentInfo<T extends Record<string, any>>(log: T) {
     const timestamp = Date.now();
     const pathname = location.pathname
     const query = location.search
@@ -10,4 +10,5 @@ export function InjectEnvironmentInfo(log: Record<string, any>): void {
     set(log, "env.pathname", pathname)
     set(log, "env.query", query)
     set(log, "env.ua", ua)
+    return log as T & LoggerEnv
 }

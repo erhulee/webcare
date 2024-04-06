@@ -1,10 +1,14 @@
 import { Monitor } from "./runtime/index"
-import { JsErrorPlugin, HTTPPlugin, ResourcePlugin } from "./plugins/index"
+import { JsErrorPlugin, HTTPPlugin, ResourcePlugin, CLSPlugin, FPPlugin, DOMMutationPlugin, FCPPlugin } from "./plugins/index"
 import { XHRSender } from "./sender/index"
 export {
     Monitor,
     JsErrorPlugin,
     HTTPPlugin,
     XHRSender,
-    ResourcePlugin
+    ResourcePlugin,
+    CLSPlugin,
+    FPPlugin,
+    DOMMutationPlugin,
+    FCPPlugin
 }

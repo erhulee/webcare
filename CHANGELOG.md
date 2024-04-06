@@ -1,5 +1,11 @@
 # sniper
 
+## 1.0.2
+
+### Patch Changes
+
+- fp/fcp 上报
+
 ## 1.0.1
 
 ### Patch Changes

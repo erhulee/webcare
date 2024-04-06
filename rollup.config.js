@@ -4,7 +4,7 @@ import babel from "rollup-plugin-babel";
 import alias from "@rollup/plugin-alias";
 import npm from "rollup-plugin-node-resolve";
 export default {
-  input: "index.ts",
+  input: "src/index.ts",
   output: [
     {
       file: "dist/index.js",

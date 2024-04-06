@@ -1,16 +1,18 @@
 {
-  "name": "sniper",
-  "version": "1.0.1",
+  "name": "webcare",
+  "version": "1.0.2",
   "license": "MIT",
   "type": "module",
   "scripts": {
     "clean": "rmdir /s /q dist",
-    "dev": " rollup -c -w",
+    "dev": "modern build -w",
     "build": "modern build",
-    "build:rollup": "npm run clean & rollup -c",
     "bump": "modern bump",
     "change": "modern change",
-    "prepublishOnly": "npm run build"
+    "prepublishOnly": "npm run build",
+    "dev:rollup": " rollup -c -w",
+    "build:rollup": "npm run clean & rollup -c",
+    "watch": "nodemon --ignore dist/ --ignore node_modules/ --watch src/ -C -e ts,tsx,scss -x yarn run build && yalc push"
   },
   "sideEffects": false,
   "dependencies": {
@@ -49,8 +51,8 @@
     "access": "public",
     "registry": "https://registry.npmjs.org/"
   },
-  "types": "./dist/index.d.ts",
-  "main": "./dist/index.js",
+  "types": "./dist/types/index.d.ts",
+  "main": "./dist/es/index.js",
   "files": [
     "dist"
   ]
