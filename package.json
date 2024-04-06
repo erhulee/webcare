@@ -1,6 +1,6 @@
 {
   "name": "sniper",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "license": "MIT",
   "type": "module",
   "scripts": {
@@ -8,6 +8,7 @@
     "dev": " rollup -c -w",
     "build": "modern build",
     "build:rollup": "npm run clean & rollup -c",
+    "bump": "modern bump",
     "change": "modern change",
     "prepublishOnly": "npm run build"
   },
