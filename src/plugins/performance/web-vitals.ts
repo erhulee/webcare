@@ -19,6 +19,15 @@ export class WebVitalsPlugin implements Plugin {
         onFCP((value) => {
             console.log("fcp:", value)
         })
+        onTTFB((value) => {
+            console.log("ttfb:", value)
+        })
+        onLCP((value) => {
+            console.log("lcp:", value)
+        })
+        onINP((value) => {
+            console.log("inp:", value)
+        })
     }
     unload() {
     }

@@ -1,5 +1,5 @@
 import { Monitor } from "./runtime/index"
-import { JsErrorPlugin, HTTPPlugin, ResourcePlugin, CLSPlugin, FPPlugin, DOMMutationPlugin, FCPPlugin } from "./plugins/index"
+import { JsErrorPlugin, HTTPPlugin, ResourcePlugin, CLSPlugin, FPPlugin, DOMMutationPlugin, FCPPlugin, WebVitalsPlugin } from "./plugins/index"
 import { XHRSender } from "./sender/index"
 export {
     Monitor,
@@ -10,5 +10,6 @@ export {
     CLSPlugin,
     FPPlugin,
     DOMMutationPlugin,
-    FCPPlugin
+    FCPPlugin,
+    WebVitalsPlugin
 }

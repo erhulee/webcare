@@ -10,7 +10,6 @@ export class FCPPlugin implements Plugin {
     run() {
         const entries = performance.getEntriesByType("paint");
         const fp_entry = entries.find(entry => entry.name == "first-paint");
-        console.log("fcp plugin:", entries)
         if (fp_entry) {
             const logger = createFCPLogger({ value: fp_entry.startTime })
             this.monitor.send(logger)
@@ -27,7 +26,7 @@ export class FCPPlugin implements Plugin {
                     }
                  */
                 const fp_value = fp_entry!.startTime;
-                //TODO: 上报一下
+                //TODO: 这nm duration 有啥用？？？？？？？
                 const logger = createFCPLogger({ value: fp_value })
                 this.monitor.send(logger)
             })

@@ -10,7 +10,6 @@ export class FPPlugin implements Plugin {
     run() {
         const entries = performance.getEntriesByType("paint");
         const fp_entry = entries.find(entry => entry.name == "first-paint");
-        console.log("fp plugin:", entries)
         if (fp_entry) {
             const logger = createFPLogger({ value: fp_entry.startTime })
             this.monitor.send(logger)

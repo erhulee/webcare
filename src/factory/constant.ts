@@ -4,6 +4,7 @@ export enum LoggerCategory {
 }
 
 export enum LoggerType {
+    HTTP = "http",
     FCP = "fcp",
     FP = "fp"
 }

@@ -4,11 +4,21 @@ import { Plugin } from "../../types/plugin";
 import { connect } from "src/runtime/connect";
 import buildQuery from "src/utils/buildQuery";
 import createHTTPErrorLogger from "src/factory/http";
+import { get, set } from "lodash-es";
 
 function isStatusOk(status: number) {
-    return !(status >= 400 && status < 600)
+    return status >= 200 && status < 300
 }
 
+function createXHRContext() {
+    return {
+        method: "",
+        url: "",
+        body: "",
+        done: false
+    }
+}
+const XHR_CONTEXT_PROPERTY = "__webcare_xhr_context__"
 @connect
 export default class HTTPPlugin implements Plugin {
     monitor!: Monitor;
@@ -19,41 +29,47 @@ export default class HTTPPlugin implements Plugin {
     run() {
         /* xhr 劫持 */
         // TODO: 目前有个缺陷, 如果 open 阶段就失败了，会监听失败(502)
-        /**
-         *  body 在 send 方法
-         *  method 在 open 方法
-         *  家人们谁懂 ！！，但是大部分的请求 open 和 send 是一起发起的，感觉是不是可以合并 ~
-         * 
-        */
-        // this.monitor.hijackFn("open", function (...args: any[]) {
-        //     const native_send = that.monitor.getHijackFn("open");
-        //     const body = args[0];
-        //     console.log("open args:", args)
-        //     const callback: (this: any) => void = function () {
-        //         console.log("callback", this)
-        //         const url = this.responseURL;
-        //         const query = buildQuery(url);
-        //         if (this.readyState == 4 && !isStatusOk(this.status)) {
-        //             // 报错
-        //             const status = this.status;
-        //             const status_text = this.statusText;
-        //             // const logger = createHTTPErrorLogger({
-
-        //             // })
-        //             // const logger = new HTTPErrorLogger(code, url, HttpMethods.POST)
-        //             // instance.monitor.send(logger)
-        //         }
-        //     }
-        //     this.addEventListener("readystatechange", callback)
-        //     native_send.call(this, ...args)
-        // }, XMLHttpRequest.prototype)
         const monitor = this.monitor;
-        this.monitor.hijackFn("send", function (...args: any[]) {
+        const open_callback = function (this: XMLHttpRequest, ...args: any[]) {
+            const native_send = that.monitor.getHijackFn("open");
+            const ctx = createXHRContext();
+            ctx.method = args[0];
+            ctx.url = args[1];
+            const callback: (this: any) => void = function () {
+                const url = this.responseURL;
+                // const query = buildQuery(url);
+                console.log("this:", this)
+                if (ctx.url == monitor.endpoint || ctx.done) return;
+                if (this.readyState == 4 && !isStatusOk(this.status)) {
+                    // 报错
+                    const status = this.status;
+                    const status_text = this.statusText;
+                    const logger = createHTTPErrorLogger({
+                        //TODO 留个类型TODO
+                        method: ctx.method as any,
+                        url: ctx.url,
+                        query: "",
+                        body: ctx.body,
+                        status: status,
+                        status_text: status_text
+                    })
+                    // const logger = new HTTPErrorLogger(code, url, HttpMethods.POST)
+                    monitor.send(logger)
+                    ctx.done = true
+                }
+            }
+            set(this, XHR_CONTEXT_PROPERTY, ctx)
+            this.addEventListener("readystatechange", callback)
+            native_send.call(this, ...args)
+        }
+        const send_callback = function (this: XMLHttpRequest, ...args: any[]) {
             const native_send = that.monitor.getHijackFn("send");
             const body = args[0];
+            const ctx = get(this, XHR_CONTEXT_PROPERTY) as unknown as ReturnType<typeof createXHRContext>;
             const callback: (this: any) => void = function () {
                 const url = this.responseURL;
                 const query = buildQuery(url);
+                if (ctx.url == monitor.endpoint || ctx.done) return;
                 if (this.readyState == 4 && !isStatusOk(this.status)) {
                     // 报错
                     const status = this.status;
@@ -70,7 +86,9 @@ export default class HTTPPlugin implements Plugin {
             }
             this.addEventListener("readystatechange", callback)
             native_send.call(this, ...args)
-        }, XMLHttpRequest.prototype)
+        }
+        this.monitor.hijackFn("open", open_callback, XMLHttpRequest.prototype)
+        this.monitor.hijackFn("send", send_callback, XMLHttpRequest.prototype)
 
 
         // /*  fetch 劫持 */
