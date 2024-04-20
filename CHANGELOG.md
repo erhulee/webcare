@@ -1,5 +1,11 @@
 # sniper
 
+## 1.0.4
+
+### Patch Changes
+
+- rrweb 支持
+
 ## 1.0.3
 
 ### Patch Changes
