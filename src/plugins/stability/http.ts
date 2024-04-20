@@ -3,8 +3,8 @@ import { Monitor } from "src/runtime";
 import { Plugin } from "../../types/plugin";
 import { connect } from "src/runtime/connect";
 import buildQuery from "src/utils/buildQuery";
-import createHTTPErrorLogger from "src/factory/http";
 import { get, set } from "lodash-es";
+import { createHTTPErrorLogger, createHTTPSlowLogger } from "@/factory/http";
 
 function isStatusOk(status: number) {
     return status >= 200 && status < 300
@@ -15,7 +15,8 @@ function createXHRContext() {
         method: "",
         url: "",
         body: "",
-        done: false
+        done: false,
+        tick: Date.now()
     }
 }
 const XHR_CONTEXT_PROPERTY = "__webcare_xhr_context__"
@@ -24,12 +25,20 @@ export default class HTTPPlugin implements Plugin {
     monitor!: Monitor;
     nativeXHRSend?: any
     nativeFetch?: any
-    constructor() {
+    slow_request?: number
+    constructor(options?: {
+        /**
+         * 慢请求预设，单位(ms)
+         */
+        slow_request?: number
+    }) {
+        this.slow_request = options?.slow_request
     }
     run() {
         /* xhr 劫持 */
         // TODO: 目前有个缺陷, 如果 open 阶段就失败了，会监听失败(502)
         const monitor = this.monitor;
+        const plugin = this;
         const open_callback = function (this: XMLHttpRequest, ...args: any[]) {
             const native_send = that.monitor.getHijackFn("open");
             const ctx = createXHRContext();
@@ -68,8 +77,10 @@ export default class HTTPPlugin implements Plugin {
             const ctx = get(this, XHR_CONTEXT_PROPERTY) as unknown as ReturnType<typeof createXHRContext>;
             const callback: (this: any) => void = function () {
                 const url = this.responseURL;
+                const request_time = Date.now() - ctx.tick;
                 const query = buildQuery(url);
                 if (ctx.url == monitor.endpoint || ctx.done) return;
+                console.log(plugin.slow_request, request_time, plugin.slow_request)
                 if (this.readyState == 4 && !isStatusOk(this.status)) {
                     // 报错
                     const status = this.status;
@@ -80,6 +91,14 @@ export default class HTTPPlugin implements Plugin {
                         body: body,
                         status: status,
                         status_text
+                    })
+                    monitor.send(logger)
+                } else if (plugin.slow_request && request_time > plugin.slow_request) {
+                    const logger = createHTTPSlowLogger({
+                        url: url,
+                        query: query,
+                        body: body,
+                        duration: request_time
                     })
                     monitor.send(logger)
                 }
@@ -107,7 +126,6 @@ export default class HTTPPlugin implements Plugin {
                 .then(async (response: Response) => {
                     if (!isStatusOk(response.status)) {
                         const { status, statusText } = response;
-
                         const logger = createHTTPErrorLogger({
                             method,
                             url: resource,

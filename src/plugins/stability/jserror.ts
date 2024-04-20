@@ -18,12 +18,11 @@ class JsErrorPlugin implements Plugin {
             this.monitor.send(createJSErrorLogger({ stack, message }))
         }
         this.promise_listener = (e: ErrorEvent) => {
+            console.log("promise_error:", e)
             this.monitor.send(createPromiseLogger({}))
         }
-
         window.addEventListener("error", this.error_listener)
         window.addEventListener("unhandledrejection", this.promise_listener)
-
     }
     unload() {
         window.removeEventListener("error", this.error_listener)

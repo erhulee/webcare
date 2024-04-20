@@ -6,5 +6,7 @@ export enum LoggerCategory {
 export enum LoggerType {
     HTTP = "http",
     FCP = "fcp",
-    FP = "fp"
+    FP = "fp",
+    JS_ERROR = "js_error",
+    UNHANDLED_PROMISE = 'unhandled_promise',
 }

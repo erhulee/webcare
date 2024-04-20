@@ -14,9 +14,25 @@ export type HTTPLogger = Logger<HTTPLoggerDetail> & {
     category: LoggerCategory.Stability,
     type: LoggerType.HTTP
 }
-export default function createHTTPErrorLogger(params: HTTPLoggerDetail) {
+export function createHTTPErrorLogger(params: HTTPLoggerDetail) {
     const logger: HTTPLogger = {
         category: LoggerCategory.Stability,
+        type: LoggerType.HTTP,
+        detail: params
+    }
+    InjectEnvironmentInfo(logger)
+    return logger
+}
+
+export function createHTTPSlowLogger(params: {
+    method?: "get" | "post" | "delete" | "put" | undefined;
+    url: string;
+    query?: string | undefined;
+    body?: string | undefined;
+    duration: number
+}) {
+    const logger = {
+        category: LoggerCategory.Performance,
         type: LoggerType.HTTP,
         detail: params
     }

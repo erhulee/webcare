@@ -15,7 +15,7 @@ class XHRSender implements Sender {
         this.method = method
     }
     send(log: SniperLog) {
-        console.log("[sniper sender]: send", log)
+        console.log("[sniper sender]: send", log, this.endpoint)
         const origin_open = this.monitor.getHijackFn("open", XMLHttpRequest.prototype.open)
         const origin_send = this.monitor.getHijackFn("send")
         const xhr = new XMLHttpRequest();
