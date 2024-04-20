@@ -2,6 +2,7 @@ import { Plugin } from "../types/plugin"
 import { AnyFunc, AnyObject } from "../types/other"
 import { Sender } from "src/types/sender";
 import { Options } from "src/types/options";
+import { GLOBAL_METHOD } from "./global";
 export class Monitor {
     private plugins: Plugin[] = [];
     private event_bus: Map<string, AnyFunc[]> = new Map();
@@ -49,11 +50,18 @@ export class Monitor {
         this.endpoint = options.endpoint;
         (window as any).__SNIPER__ = this
     }
-    call(eventName: string, ...args: any[]) {
-        if (!this.event_bus.has(eventName)) {
-            console.log("[sniper]: 未实现该事件")
+    // 调用 plugin 上向外暴露的事件
+    call(eventName: GLOBAL_METHOD, ...args: any[]) {
+        const target_plugins = this.plugins.filter(plugin => Boolean(plugin.globalMethod?.[eventName]));
+        if (target_plugins.length == 0 || !Array.isArray(target_plugins)) {
+            console.error("[webcare]: 未实现该事件")
+            return null
+        } else if (target_plugins.length > 1) {
+            console.error("[webcare]: 有两个plugin实现该事件")
+            return null
+        } else {
+            return target_plugins[0].globalMethod?.[eventName](...args)
         }
-        (this.event_bus.get(eventName) as AnyFunc[]).forEach(fn => fn(...args))
     }
 
     use(sender: Sender): void;
@@ -62,24 +70,23 @@ export class Monitor {
         // 插件挂载
         if (Array.isArray(element)) {
             element.forEach(plugin => {
-                console.log(plugin.monitor)
                 // plugin 挂载到 monitor 实例上
                 // plugin.monitor = this;
                 this.plugins.push(plugin)
 
                 // 读取要监听的时间
-                if (typeof plugin.events == "function") {
-                    const event_entry = plugin.events();
-                    const event_name = Object.keys(event_entry);
-                    event_name.forEach(event => {
-                        const event_callback = event_entry[event].bind(plugin)
-                        if (this.event_bus.has(event)) {
-                            (this.event_bus.get(event) as AnyFunc[]).push(event_callback)
-                        } else {
-                            this.event_bus.set(event, [event_callback])
-                        }
-                    })
-                }
+                // if (typeof plugin.events == "function") {
+                //     const event_entry = plugin.events();
+                //     const event_name = Object.keys(event_entry);
+                //     event_name.forEach(event => {
+                //         const event_callback = event_entry[event].bind(plugin)
+                //         if (this.event_bus.has(event)) {
+                //             (this.event_bus.get(event) as AnyFunc[]).push(event_callback)
+                //         } else {
+                //             this.event_bus.set(event, [event_callback])
+                //         }
+                //     })
+                // }
             })
 
         } else {

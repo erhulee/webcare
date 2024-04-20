@@ -1,5 +1,11 @@
 # sniper
 
+## 1.0.3
+
+### Patch Changes
+
+- 新增 image sender
+
 ## 1.0.2
 
 ### Patch Changes

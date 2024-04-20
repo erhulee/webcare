@@ -1,24 +1,27 @@
 import { Monitor } from "src/runtime";
 import { Plugin } from "../../types/plugin";
 import { connect } from "src/runtime/connect";
-import { LimitQueue } from "src/utils/LimitQueue";
 import createJSErrorLogger from "src/factory/jserror";
 import createPromiseLogger from "src/factory/unhandled_promise";
+import { GLOBAL_METHOD } from "@/runtime/global";
+import { set } from "lodash-es";
 
 @connect
 class JsErrorPlugin implements Plugin {
     monitor!: Monitor;
     error_listener: any;
     promise_listener: any;
-    rrwebQueue: LimitQueue<any>
-
     run() {
         this.error_listener = (e: ErrorEvent) => {
             const { stack, message } = e.error
-            this.monitor.send(createJSErrorLogger({ stack, message }))
+            const rrweb = this.monitor.call(GLOBAL_METHOD.GET_RRWEB_DATA)
+            const logger = createJSErrorLogger({ stack, message });
+            if (rrweb != null) {
+                set(logger, "record", rrweb)
+            }
+            this.monitor.send(logger)
         }
         this.promise_listener = (e: ErrorEvent) => {
-            console.log("promise_error:", e)
             this.monitor.send(createPromiseLogger({}))
         }
         window.addEventListener("error", this.error_listener)
@@ -28,17 +31,7 @@ class JsErrorPlugin implements Plugin {
         window.removeEventListener("error", this.error_listener)
         window.removeEventListener("unhandledrejection", this.promise_listener)
     }
-    events() {
-        return {
-            rrweb: (event: any) => {
-                this.rrwebQueue.add(event)
-            }
-        }
-    }
-    //  屏幕录制buffer尺寸
-    constructor(rrweb_size: number = 20) {
-        this.rrwebQueue = new LimitQueue<any>(rrweb_size)
-    }
+
 }
 
 export default JsErrorPlugin
