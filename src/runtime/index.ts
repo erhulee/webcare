@@ -112,8 +112,4 @@ export class Monitor {
         console.log("[sniper send]:", data)
         this.sender.send(data)
     }
-
-    static getInstance() {
-        return window.__SNIPER__
-    }
 }
