@@ -5,7 +5,8 @@
   "type": "module",
   "scripts": {
     "clean": "rmdir /s /q dist",
-    "dev": "modern build -w",
+    "dev": "modern dev",
+    "watch": "modern build -w",
     "build": "modern build",
     "bump": "modern bump",
     "change": "modern change",
@@ -13,7 +14,7 @@
     "prepublishOnly": "npm run build",
     "dev:rollup": " rollup -c -w",
     "build:rollup": "npm run clean & rollup -c",
-    "watch": "nodemon --ignore dist/ --ignore node_modules/ --watch src/ -C -e ts,tsx,scss -x yarn run build && yalc push"
+    "watch:rollup": "nodemon --ignore dist/ --ignore node_modules/ --watch src/ -C -e ts,tsx,scss -x yarn run build && yalc push"
   },
   "sideEffects": false,
   "dependencies": {

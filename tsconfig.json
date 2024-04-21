@@ -1,6 +1,7 @@
 {
   "include": ["**/*.ts", "**/*.tsx", "**/*.d.ts", "modern.config.js"],
   "compilerOptions": {
+    "typeRoots": ["./node_modules/@types."],
     "isolatedModules": false,
     "jsx": "react",
     "outDir": "esm",

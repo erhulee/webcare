@@ -1,0 +1,39 @@
+# Runtime
+
+## 功能介绍
+
+监控示例的 `Class`，不具备监控功能，只负责一些内聚的共享方法, 以及用户配置
+
+- **call**：部分 Plugin 会向外暴露全局方法，调用 monitor.call 可以执行后拿到结果
+- **lifecycle**:生命周期控制
+- **use**: 挂载 plugin 或者 sender
+- **send**: 使用方自己上报错误
+- **setUID**: 设置 uid, 用户 ID 计算核心维度
+
+## API 介绍
+
+### use
+
+目前需要 plugin 和 sender 分开 use；并且要求在 start 之前 use ~
+
+```typescript
+use(sender: Sender): void;
+use(plugins: Plugin[]): void;
+use(element: Plugin[] | Sender):void;
+
+```
+
+### start
+
+monitor 启动，并且启动所有 plugin
+
+### unload
+
+monitor 暂停，并且暂停所有 plugin
+
+### setUID
+
+```typescript
+ setUID(uid: string | number) :void
+
+```
