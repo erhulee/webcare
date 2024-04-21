@@ -32,7 +32,6 @@ export class Monitor {
             return this.hijackCache.get(key).fn as AnyFunc
         }
     }
-
     releaseHijackFn(key: string) {
         debugger
         const { fn, owner } = this.hijackCache.get(key)
@@ -40,11 +39,13 @@ export class Monitor {
     }
     /* ------------------ */
 
-
-
     appid: string
     endpoint: string
     env: Record<string, any> = {}
+    uid?: string | number
+    setUID(uid: string | number) {
+        this.uid = uid
+    }
     constructor(options: Options) {
         this.appid = options.appid
         this.endpoint = options.endpoint;
@@ -63,7 +64,6 @@ export class Monitor {
             return target_plugins[0].globalMethod?.[eventName](...args)
         }
     }
-
     use(sender: Sender): void;
     use(plugins: Plugin[]): void;
     use(element: Plugin[] | Sender) {
@@ -94,7 +94,6 @@ export class Monitor {
             this.sender = element
         }
     }
-
     start(env: Record<string, any>) {
         if (env) this.env = env
         if (this.sender == null) {
@@ -106,11 +105,9 @@ export class Monitor {
     unload() {
         this.plugins.forEach(plugin => plugin.unload())
     }
-
     track(data: any) {
         this.sender.send(data)
     }
-
     send(data: any) {
         console.log("[sniper send]:", data)
         this.sender.send(data)
