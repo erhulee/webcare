@@ -1,5 +1,11 @@
 # sniper
 
+## 1.0.5
+
+### Patch Changes
+
+- pv 埋点支持
+
 ## 1.0.4
 
 ### Patch Changes
