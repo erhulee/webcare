@@ -1,7 +1,9 @@
 import { set } from "lodash-es";
 import { LoggerEnv } from "./interface";
+import { Monitor } from "..";
 
 export function InjectEnvironmentInfo<T extends Record<string, any>>(log: T) {
+    const monitor = Monitor.getInstance();
     const timestamp = Date.now();
     const pathname = location.pathname
     const query = location.search
@@ -9,6 +11,8 @@ export function InjectEnvironmentInfo<T extends Record<string, any>>(log: T) {
     set(log, "timestamp", timestamp)
     set(log, "pathname", pathname)
     set(log, "query", query)
-    set(log, "ua", ua)
+    set(log, "ua", ua);
+    (monitor.uid) && set(log, "uid", monitor.uid);
+    (monitor.appid) && set(log, "appid", monitor.appid)
     return log as T & LoggerEnv
 }

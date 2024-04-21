@@ -1,6 +1,7 @@
 export enum LoggerCategory {
     Stability = "stability",
-    Performance = "performance"
+    Performance = "performance",
+    Behavior = "behavior"
 }
 
 export enum LoggerType {
@@ -9,4 +10,5 @@ export enum LoggerType {
     FP = "fp",
     JS_ERROR = "js_error",
     UNHANDLED_PROMISE = 'unhandled_promise',
+    PV = "pv"
 }
