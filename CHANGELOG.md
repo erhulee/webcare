@@ -1,5 +1,11 @@
 # sniper
 
+## 1.0.6
+
+### Patch Changes
+
+- env 数据插入 href
+
 ## 1.0.5
 
 ### Patch Changes

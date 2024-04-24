@@ -6,11 +6,13 @@ export function InjectEnvironmentInfo<T extends Record<string, any>>(log: T) {
     const timestamp = Date.now();
     const pathname = location.pathname
     const query = location.search
+    const href = location.href
     const ua = navigator.userAgent
     set(log, "timestamp", timestamp)
     set(log, "pathname", pathname)
     set(log, "query", query)
     set(log, "ua", ua);
+    set(log, "href", href);
     (monitor.uid) && set(log, "uid", monitor.uid);
     (monitor.appid) && set(log, "appid", monitor.appid)
     return log as T & LoggerEnv
