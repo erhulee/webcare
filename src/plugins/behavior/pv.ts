@@ -26,7 +26,6 @@ export class PVPlugin implements Plugin {
          * - url：新的网址，必须与当前页面处在同一个域。浏览器的地址栏将显示这个网址。
          */
         this.monitor.hijackFn("pushState", (...args) => {
-            console.log("pushState")
             const { href: url } = location;
             const logger = createPVLogger({ url })
             this.monitor.send(logger);
@@ -34,7 +33,6 @@ export class PVPlugin implements Plugin {
             native_pushState.call(history, ...args)
         }, window.history)
         this.monitor.hijackFn("replaceState", (...args) => {
-            console.log("replaceState")
             const { href: url } = location;
             const logger = createPVLogger({ url })
             this.monitor.send(logger);

@@ -1,5 +1,11 @@
 # sniper
 
+## 1.0.7
+
+### Patch Changes
+
+- react 工具函数
+
 ## 1.0.6
 
 ### Patch Changes

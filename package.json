@@ -1,6 +1,6 @@
 {
   "name": "webcare",
-  "version": "1.0.6",
+  "version": "1.0.7",
   "license": "MIT",
   "type": "module",
   "scripts": {
@@ -31,6 +31,7 @@
     "@babel/preset-env": "^7.20.2",
     "@fingerprintjs/fingerprintjs": "^3.3.6",
     "@modern-js/module-tools": "^2.48.4",
+    "@modern-js/plugin-rspress": "1.18.2",
     "@rollup/plugin-alias": "^4.0.2",
     "@rollup/plugin-typescript": "^10.0.1",
     "@types/fingerprintjs": "^0.5.28",
@@ -48,8 +49,10 @@
     "rollup-plugin-typescript2": "^0.34.1",
     "tslib": "^2.4.1",
     "typescript": "^4.9.4",
-    "uuid": "^9.0.0",
-    "@modern-js/plugin-rspress": "1.18.2"
+    "uuid": "^9.0.0"
+  },
+  "peerDependencies": {
+    "react": "^18.3.1"
   },
   "publishConfig": {
     "access": "public",
