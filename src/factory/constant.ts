@@ -10,5 +10,6 @@ export enum LoggerType {
     FP = "fp",
     JS_ERROR = "js_error",
     UNHANDLED_PROMISE = 'unhandled_promise',
-    PV = "pv"
+    PV = "pv",
+    WEB_VITAL = "web_vital"
 }

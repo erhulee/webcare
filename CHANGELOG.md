@@ -1,5 +1,17 @@
 # sniper
 
+## 1.0.9
+
+### Patch Changes
+
+- webvital-plugin 支持
+
+## 1.0.8
+
+### Patch Changes
+
+- react 修复
+
 ## 1.0.7
 
 ### Patch Changes

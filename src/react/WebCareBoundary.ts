@@ -1,7 +1,8 @@
 import createJSErrorLogger from "@/factory/jserror";
-import { Component } from "react";
+import React, { Component, ReactNode } from "react";
 
-class WebCareBoundary extends Component {
+type Props = React.PropsWithChildren<{}>
+class WebCareBoundary extends Component<Props> {
     componentDidCatch(error: Error, errorInfo: React.ErrorInfo) {
         // 错误上报
         const instance = (window as any).__SNIPER__;
@@ -10,6 +11,10 @@ class WebCareBoundary extends Component {
             message: error.message
         })
         instance.send(logger)
+    }
+    render(): ReactNode {
+        const { children } = this.props
+        return children
     }
 }
 
