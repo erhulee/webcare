@@ -1,5 +1,23 @@
 # sniper
 
+## 1.0.12
+
+### Patch Changes
+
+- fix: pvplugin 修改 query 也会触发 pv 事件
+
+## 1.0.11
+
+### Patch Changes
+
+- 测试一下
+
+## 1.0.10
+
+### Patch Changes
+
+- webvital 的 looger 忘记发送了
+
 ## 1.0.9
 
 ### Patch Changes

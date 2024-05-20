@@ -6,17 +6,30 @@ import { Plugin } from "@/types/plugin";
 @connect
 export class PVPlugin implements Plugin {
     monitor!: Monitor;
+    pre_pathname: string = ""
     run() {
         const monitor = this.monitor;
         window.addEventListener("hashchange", (e) => {
-            const { href: url } = location;
-            const logger = createPVLogger({ url })
-            this.monitor.send(logger);
+            const current_pathname = location.pathname
+            const pre_pathname = this.pre_pathname
+            if (pre_pathname == current_pathname) {
+                // skip
+            } else {
+                const { href: url } = location;
+                const logger = createPVLogger({ url })
+                this.monitor.send(logger);
+            }
         })
         window.addEventListener("popstate", (e) => {
-            const { href: url } = location;
-            const logger = createPVLogger({ url })
-            this.monitor.send(logger);
+            const current_pathname = location.pathname
+            const pre_pathname = this.pre_pathname
+            if (pre_pathname == current_pathname) {
+                // skip
+            } else {
+                const { href: url } = location;
+                const logger = createPVLogger({ url })
+                this.monitor.send(logger);
+            }
         })
         //
         /**
@@ -26,16 +39,28 @@ export class PVPlugin implements Plugin {
          * - url：新的网址，必须与当前页面处在同一个域。浏览器的地址栏将显示这个网址。
          */
         this.monitor.hijackFn("pushState", (...args) => {
-            const { href: url } = location;
-            const logger = createPVLogger({ url })
-            this.monitor.send(logger);
+            const current_pathname = location.pathname
+            const pre_pathname = this.pre_pathname
+            if (pre_pathname == current_pathname) {
+                // skip
+            } else {
+                const { href: url } = location;
+                const logger = createPVLogger({ url })
+                this.monitor.send(logger);
+            }
             const native_pushState = monitor.getHijackFn("pushState")
             native_pushState.call(history, ...args)
         }, window.history)
         this.monitor.hijackFn("replaceState", (...args) => {
-            const { href: url } = location;
-            const logger = createPVLogger({ url })
-            this.monitor.send(logger);
+            const current_pathname = location.pathname
+            const pre_pathname = this.pre_pathname
+            if (pre_pathname == current_pathname) {
+                // skip
+            } else {
+                const { href: url } = location;
+                const logger = createPVLogger({ url })
+                this.monitor.send(logger);
+            }
             const native_replaceState = monitor.getHijackFn("replaceState")
             native_replaceState.call(history, ...args)
         }, window.history)
