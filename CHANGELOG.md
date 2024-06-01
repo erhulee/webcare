@@ -1,5 +1,11 @@
 # sniper
 
+## 1.0.13
+
+### Patch Changes
+
+- timing 指标上报
+
 ## 1.0.12
 
 ### Patch Changes

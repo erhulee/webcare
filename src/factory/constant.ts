@@ -8,6 +8,7 @@ export enum LoggerType {
     HTTP = "http",
     FCP = "fcp",
     FP = "fp",
+    TIMING = "timing",
     JS_ERROR = "js_error",
     UNHANDLED_PROMISE = 'unhandled_promise',
     PV = "pv",

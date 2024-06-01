@@ -5,7 +5,7 @@ import { AnyFunc } from "./other";
 export interface Plugin {
     monitor: Monitor
     run: () => void
-    unload: () => void
+    unload?: () => void
     /**
      * 监听的事件
      */

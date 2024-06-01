@@ -103,7 +103,11 @@ export class Monitor {
         this.plugins.forEach(plugin => plugin.run())
     }
     unload() {
-        this.plugins.forEach(plugin => plugin.unload())
+        this.plugins.forEach(plugin => {
+            if (typeof plugin.unload == "function") {
+                plugin.unload()
+            }
+        })
     }
     track(data: any) {
         this.sender.send(data)
