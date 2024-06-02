@@ -31,12 +31,27 @@ export class TimingPlugin implements Plugin {
             const dom = timing.domComplete - timing.domInteractive;
             const duration = timing.duration
             this.monitor.send(createTimingLogger({
-                dns,
-                tcp,
-                ttfb,
-                request,
-                dom,
-                duration
+                metric: {
+                    dns,
+                    tcp,
+                    ttfb,
+                    request,
+                    dom,
+                    duration
+                },
+                domainLookupEnd: timing.domainLookupEnd,
+                domainLookupStart: timing.domainLookupStart,
+                connectEnd: timing.connectEnd,
+                connectStart: timing.connectStart,
+                responseStart: timing.responseStart,
+                responseEnd: timing.responseEnd,
+                fetchStart: timing.fetchStart,
+                requestStart: timing.requestStart,
+                domComplete: timing.domComplete,
+                domInteractive: timing.domInteractive,
+                loadEventEnd: timing.loadEventEnd,
+                redirectStart: timing.requestStart,
+                duration: timing.duration
             }))
         } else {
             const timing = performance.timing
@@ -47,12 +62,27 @@ export class TimingPlugin implements Plugin {
             const dom = timing.domComplete - timing.domInteractive
             const duration = timing.loadEventEnd - timing.redirectStart
             this.monitor.send(createTimingLogger({
-                dns,
-                tcp,
-                ttfb,
-                request,
-                dom,
-                duration
+                metric: {
+                    dns,
+                    tcp,
+                    ttfb,
+                    request,
+                    dom,
+                    duration
+                },
+                domainLookupEnd: timing.domainLookupEnd,
+                domainLookupStart: timing.domainLookupStart,
+                connectEnd: timing.connectEnd,
+                connectStart: timing.connectStart,
+                responseStart: timing.responseStart,
+                responseEnd: timing.responseEnd,
+                fetchStart: timing.fetchStart,
+                requestStart: timing.requestStart,
+                domComplete: timing.domComplete,
+                domInteractive: timing.domInteractive,
+                loadEventEnd: timing.loadEventEnd,
+                redirectStart: timing.requestStart,
+                duration: duration
             }))
         }
     }

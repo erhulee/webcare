@@ -1,5 +1,17 @@
 # sniper
 
+## 1.0.15
+
+### Patch Changes
+
+- fix: 数据更正
+
+## 1.0.14
+
+### Patch Changes
+
+- fix: 报文 category 错误
+
 ## 1.0.13
 
 ### Patch Changes
