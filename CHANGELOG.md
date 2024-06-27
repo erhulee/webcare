@@ -1,5 +1,11 @@
 # sniper
 
+## 1.0.16
+
+### Patch Changes
+
+- timing 指标收集异常
+
 ## 1.0.15
 
 ### Patch Changes

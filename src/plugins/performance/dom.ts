@@ -8,7 +8,6 @@ export class DOMMutationPlugin implements Plugin {
     mutation_observer: MutationObserver
     constructor() {
         this.mutation_observer = new window.MutationObserver(() => {
-            console.log("dom mutation")
         })
     }
     run() {

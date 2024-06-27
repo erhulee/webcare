@@ -8,7 +8,6 @@ export class CLSPlugin implements Plugin {
     callback: PerformanceObserverCallback = (entryList) => {
         const entries = entryList.getEntries();
         entries.forEach(entry => {
-            console.log("entry:", entry)
         })
     }
     observer: PerformanceObserver

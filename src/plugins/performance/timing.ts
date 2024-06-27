@@ -20,70 +20,123 @@ import { Plugin } from "@/types/plugin"
 @connect
 export class TimingPlugin implements Plugin {
     monitor!: Monitor;
+    observer?: PerformanceObserver
     run() {
-        const entry = performance?.getEntriesByType?.("navigation")
-        if (entry && entry[0]) {
-            const timing = entry[0]
-            const dns = timing.domainLookupEnd - timing.domainLookupStart;
-            const tcp = timing.connectEnd - timing.connectStart;
-            const ttfb = timing.responseStart - timing.fetchStart;
-            const request = timing.responseEnd - timing.requestStart;
-            const dom = timing.domComplete - timing.domInteractive;
-            const duration = timing.duration
-            this.monitor.send(createTimingLogger({
-                metric: {
-                    dns,
-                    tcp,
-                    ttfb,
-                    request,
-                    dom,
-                    duration
-                },
-                domainLookupEnd: timing.domainLookupEnd,
-                domainLookupStart: timing.domainLookupStart,
-                connectEnd: timing.connectEnd,
-                connectStart: timing.connectStart,
-                responseStart: timing.responseStart,
-                responseEnd: timing.responseEnd,
-                fetchStart: timing.fetchStart,
-                requestStart: timing.requestStart,
-                domComplete: timing.domComplete,
-                domInteractive: timing.domInteractive,
-                loadEventEnd: timing.loadEventEnd,
-                redirectStart: timing.requestStart,
-                duration: timing.duration
-            }))
+        if (typeof PerformanceObserver == "function") {
+            this.observer = new PerformanceObserver((entries) => {
+                const navigation_entry = entries.getEntriesByType("navigation").find(item => item.entryType == "navigation")
+                if (navigation_entry == null) {
+                    // TODO: 我也不知道咋办，取 performance?.getEntriesByType?.("navigation") 兜底吧
+
+                } else {
+                    const timing = navigation_entry as PerformanceNavigationTiming
+                    const dns = timing.domainLookupEnd - timing.domainLookupStart;
+                    const tcp = timing.connectEnd - timing.connectStart;
+                    const ttfb = timing.responseStart - timing.fetchStart;
+                    const request = timing.responseEnd - timing.requestStart;
+                    const dom = timing.domComplete - timing.domInteractive;
+                    const duration = timing.duration
+                    this.monitor.send(createTimingLogger({
+                        metric: {
+                            dns,
+                            tcp,
+                            ttfb,
+                            request,
+                            dom,
+                            duration
+                        },
+                        domainLookupEnd: timing.domainLookupEnd,
+                        domainLookupStart: timing.domainLookupStart,
+                        connectEnd: timing.connectEnd,
+                        connectStart: timing.connectStart,
+                        responseStart: timing.responseStart,
+                        responseEnd: timing.responseEnd,
+                        fetchStart: timing.fetchStart,
+                        requestStart: timing.requestStart,
+                        domComplete: timing.domComplete,
+                        domInteractive: timing.domInteractive,
+                        loadEventEnd: timing.loadEventEnd,
+                        redirectStart: timing.requestStart,
+                        duration: timing.duration
+                    }))
+                }
+            })
+            this.observer.observe({
+                type: "navigation"
+            })
         } else {
-            const timing = performance.timing
-            const dns = timing.domainLookupEnd - timing.domainLookupStart;
-            const tcp = timing.connectEnd - timing.connectStart;
-            const ttfb = timing.responseStart - timing.fetchStart;
-            const request = timing.responseEnd - timing.requestStart;
-            const dom = timing.domComplete - timing.domInteractive
-            const duration = timing.loadEventEnd - timing.redirectStart
-            this.monitor.send(createTimingLogger({
-                metric: {
-                    dns,
-                    tcp,
-                    ttfb,
-                    request,
-                    dom,
-                    duration
-                },
-                domainLookupEnd: timing.domainLookupEnd,
-                domainLookupStart: timing.domainLookupStart,
-                connectEnd: timing.connectEnd,
-                connectStart: timing.connectStart,
-                responseStart: timing.responseStart,
-                responseEnd: timing.responseEnd,
-                fetchStart: timing.fetchStart,
-                requestStart: timing.requestStart,
-                domComplete: timing.domComplete,
-                domInteractive: timing.domInteractive,
-                loadEventEnd: timing.loadEventEnd,
-                redirectStart: timing.requestStart,
-                duration: duration
-            }))
+            /**
+             * 这里直接拿 domComplete = 0，估计是太早了，我推测需要 setTimeout 去轮询
+             */
+            // const entry = performance?.getEntriesByType?.("navigation")
+            // if (entry && entry[0]) {
+            //     const timing = entry[0]
+            //     const dns = timing.domainLookupEnd - timing.domainLookupStart;
+            //     const tcp = timing.connectEnd - timing.connectStart;
+            //     const ttfb = timing.responseStart - timing.fetchStart;
+            //     const request = timing.responseEnd - timing.requestStart;
+            //     const dom = timing.domComplete - timing.domInteractive;
+            //     const duration = timing.duration
+            //     this.monitor.send(createTimingLogger({
+            //         metric: {
+            //             dns,
+            //             tcp,
+            //             ttfb,
+            //             request,
+            //             dom,
+            //             duration
+            //         },
+            //         domainLookupEnd: timing.domainLookupEnd,
+            //         domainLookupStart: timing.domainLookupStart,
+            //         connectEnd: timing.connectEnd,
+            //         connectStart: timing.connectStart,
+            //         responseStart: timing.responseStart,
+            //         responseEnd: timing.responseEnd,
+            //         fetchStart: timing.fetchStart,
+            //         requestStart: timing.requestStart,
+            //         domComplete: timing.domComplete,
+            //         domInteractive: timing.domInteractive,
+            //         loadEventEnd: timing.loadEventEnd,
+            //         redirectStart: timing.requestStart,
+            //         duration: timing.duration
+            //     }))
+            // } else {
+            //     const timing = performance.timing
+            //     const dns = timing.domainLookupEnd - timing.domainLookupStart;
+            //     const tcp = timing.connectEnd - timing.connectStart;
+            //     const ttfb = timing.responseStart - timing.fetchStart;
+            //     const request = timing.responseEnd - timing.requestStart;
+            //     const dom = timing.domComplete - timing.domInteractive
+            //     const duration = timing.loadEventEnd - timing.redirectStart
+            //     this.monitor.send(createTimingLogger({
+            //         metric: {
+            //             dns,
+            //             tcp,
+            //             ttfb,
+            //             request,
+            //             dom,
+            //             duration
+            //         },
+            //         domainLookupEnd: timing.domainLookupEnd,
+            //         domainLookupStart: timing.domainLookupStart,
+            //         connectEnd: timing.connectEnd,
+            //         connectStart: timing.connectStart,
+            //         responseStart: timing.responseStart,
+            //         responseEnd: timing.responseEnd,
+            //         fetchStart: timing.fetchStart,
+            //         requestStart: timing.requestStart,
+            //         domComplete: timing.domComplete,
+            //         domInteractive: timing.domInteractive,
+            //         loadEventEnd: timing.loadEventEnd,
+            //         redirectStart: timing.requestStart,
+            //         duration: duration
+            //     }))
+            // }
+        }
+    }
+    unload() {
+        if (this.observer) {
+            this.observer.disconnect()
         }
     }
 }

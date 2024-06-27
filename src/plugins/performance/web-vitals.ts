@@ -8,7 +8,6 @@ import { onCLS, onFCP, onTTFB, onFID, onLCP, onINP, Metric } from "web-vitals";
 export class WebVitalsPlugin implements Plugin {
     monitor!: Monitor;
     callback = (event: Metric) => {
-        console.log("webvital:", event)
         const logger = createWebVitalLogger({
             name: event.name,
             navigationType: event.navigationType,
