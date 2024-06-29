@@ -1,5 +1,11 @@
 # sniper
 
+## 1.0.17
+
+### Patch Changes
+
+- http plugin 支持隐私
+
 ## 1.0.16
 
 ### Patch Changes
