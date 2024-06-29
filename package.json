@@ -1,6 +1,6 @@
 {
   "name": "webcare",
-  "version": "1.0.17",
+  "version": "1.0.18",
   "license": "MIT",
   "type": "module",
   "scripts": {
@@ -8,8 +8,8 @@
     "dev": "modern dev",
     "watch": "modern build -w",
     "build": "modern build",
-    "bump": "modern bump",
     "change": "modern change",
+    "bump": "modern bump",
     "release": "modern release",
     "prepublishOnly": "npm run build",
     "dev:rollup": " rollup -c -w",

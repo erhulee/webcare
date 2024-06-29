@@ -1,5 +1,11 @@
 # sniper
 
+## 1.0.18
+
+### Patch Changes
+
+- 更新 resource plugin 代码
+
 ## 1.0.17
 
 ### Patch Changes

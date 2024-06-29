@@ -3,8 +3,11 @@ import { AnyFunc, AnyObject } from "../types/other"
 import { Sender } from "src/types/sender";
 import { Options } from "src/types/options";
 import { GLOBAL_METHOD } from "./global";
+import { generateCanvasDeviceID, generateSessionID } from "@/utils/device";
 export class Monitor {
     private plugins: Plugin[] = [];
+    public deviceID: string = generateCanvasDeviceID();
+    public sessionID: string = generateSessionID();
     private event_bus: Map<string, AnyFunc[]> = new Map();
     // 对外隐藏
     private sender!: Sender
@@ -49,6 +52,11 @@ export class Monitor {
     constructor(options: Options) {
         this.appid = options.appid
         this.endpoint = options.endpoint;
+
+        // 生成 session id
+
+        // 生成 浏览器指纹
+
         (window as any).__SNIPER__ = this
     }
     // 调用 plugin 上向外暴露的事件
@@ -113,7 +121,6 @@ export class Monitor {
         this.sender.send(data)
     }
     send(data: any) {
-        console.log("[sniper send]:", data)
         this.sender.send(data)
     }
 }
