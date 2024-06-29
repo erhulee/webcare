@@ -26,19 +26,21 @@ class ResourcePlugin implements Plugin {
                         case "link":
                         case "img":
                         case "css":
-                            console.log("from resource entry:", entry)
                             // 通过 entry 的字段，获取文件名/文件大小/耗时等信息
                             const fileSize = entry.transferSize;
                             // duration = entry.responseEnd - entry.responseStart;
                             const duration = entry.duration;
                             const filePath = entry.name;
+                            const type = entry.initiatorType;
                             if (isFail(entry)) {
                                 that.monitor.send(createResourceErrorLogger({
+                                    type: type,
                                     file_url: filePath
                                 }))
                             } else {
                                 that.monitor.send(
                                     createResourcePerformanceLogger({
+                                        type: type,
                                         file_url: filePath,
                                         duration: duration,
                                         file_size: fileSize

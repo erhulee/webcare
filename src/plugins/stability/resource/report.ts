@@ -2,7 +2,8 @@ import { InjectEnvironmentInfo } from "@/factory/base";
 import { Monitor } from "src/runtime";
 
 export function createResourceErrorLogger(params: {
-    file_url: string
+    file_url: string,
+    type: string,
 }) {
     const logger = {
         category: "stability",
@@ -16,7 +17,8 @@ export function createResourceErrorLogger(params: {
 export function createResourcePerformanceLogger(params: {
     file_url: string,
     duration: number,
-    file_size: number
+    file_size: number,
+    type: string,
 }) {
     const logger = {
         category: "performance",
