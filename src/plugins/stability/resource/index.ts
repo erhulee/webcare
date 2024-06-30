@@ -2,7 +2,7 @@ import { Monitor } from "src/runtime";
 import { connect } from "src/runtime/connect";
 import { AnyFunc } from "src/types/other";
 import { Plugin } from "src/types/plugin";
-import { isFail } from "./is";
+import { isCORS, isFail } from "./is";
 import { createResourceErrorLogger, createResourcePerformanceLogger } from "./report";
 
 @connect
@@ -13,43 +13,54 @@ class ResourcePlugin implements Plugin {
     run() {
         const that = this;
         if (typeof PerformanceObserver == "function") {
+            /**
+             * 发现直接用 PerformanceObserver 是拿不到代码运行前发生的资源加载，除非把代码写死在 index.html 中
+             * 不然会存在监控异常的问题
+             *
+             * 所以这里 performance.getEntriesByType 先捞一批
+             */
+
+            const walk = (entry: PerformanceResourceTiming) => {
+                console.log("from resource plugin:", entry)
+                switch (entry.initiatorType) {
+                    case "beacon":
+                    case "fetch":
+                    case "xmlhttprequest":
+                        break;
+                    case "script":
+                    case "link":
+                    case "img":
+                    case "css":
+                        // 通过 entry 的字段，获取文件名/文件大小/耗时等信息
+                        const fileSize = entry.encodedBodySize;
+                        // duration = entry.responseEnd - entry.responseStart;
+                        const duration = entry.duration;
+                        const filePath = entry.name;
+                        const type = entry.initiatorType;
+                        if (isFail(entry)) {
+                            that.monitor.send(createResourceErrorLogger({
+                                type: type,
+                                file_url: filePath
+                            }))
+                        } else if (!isCORS(entry)) {
+                            that.monitor.send(
+                                createResourcePerformanceLogger({
+                                    type: type,
+                                    file_url: filePath,
+                                    duration: duration,
+                                    file_size: fileSize
+                                })
+                            )
+                        }
+                    default:
+                        console.log("from resource plugin:", entry)
+                }
+            }
+            const preEntries = performance.getEntriesByType('resource');
+            preEntries.forEach(walk)
             this.performanceObserver = new PerformanceObserver(((list, observer) => {
                 const entries = list.getEntriesByType("resource") as unknown as PerformanceResourceTiming[];
-
-                entries.forEach((entry: PerformanceResourceTiming) => {
-                    switch (entry.initiatorType) {
-                        case "beacon":
-                        case "fetch":
-                        case "xmlhttprequest":
-                            break;
-                        case "script":
-                        case "link":
-                        case "img":
-                        case "css":
-                            // 通过 entry 的字段，获取文件名/文件大小/耗时等信息
-                            const fileSize = entry.transferSize;
-                            // duration = entry.responseEnd - entry.responseStart;
-                            const duration = entry.duration;
-                            const filePath = entry.name;
-                            const type = entry.initiatorType;
-                            if (isFail(entry)) {
-                                that.monitor.send(createResourceErrorLogger({
-                                    type: type,
-                                    file_url: filePath
-                                }))
-                            } else {
-                                that.monitor.send(
-                                    createResourcePerformanceLogger({
-                                        type: type,
-                                        file_url: filePath,
-                                        duration: duration,
-                                        file_size: fileSize
-                                    })
-                                )
-                            }
-                        default:
-                    }
-                })
+                entries.forEach(walk)
             }))
             this.performanceObserver.observe({
                 entryTypes: ["resource"],

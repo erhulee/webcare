@@ -1,5 +1,17 @@
 # sniper
 
+## 1.1.0
+
+### Minor Changes
+
+- did 修改
+
+## 1.0.20
+
+### Patch Changes
+
+- crypto 换包
+
 ## 1.0.19
 
 ### Patch Changes
