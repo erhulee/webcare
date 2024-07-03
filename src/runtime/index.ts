@@ -8,9 +8,11 @@ export class Monitor {
     private plugins: Plugin[] = [];
     public deviceID: string = generateCanvasDeviceID();
     public sessionID: string = generateSessionID();
+
     private event_bus: Map<string, AnyFunc[]> = new Map();
     // 对外隐藏
     private sender!: Sender
+    private loggerFilter: LoggerFilter = new LoggerFilter()
     private hijackCache = new Map()
     get sender_method() {
         // 如果是 beacon sender，也需要规定 method 是 post，
@@ -116,11 +118,18 @@ export class Monitor {
                 plugin.unload()
             }
         })
+        this.loggerFilter.stop()
     }
     track(data: any) {
         this.sender.send(data)
     }
     send(data: any) {
-        this.sender.send(data)
+        /**
+         * hash 值去重
+         */
+        const ok = this.loggerFilter.validate(data)
+        if (ok) {
+            this.sender.send(data)
+        }
     }
 }
