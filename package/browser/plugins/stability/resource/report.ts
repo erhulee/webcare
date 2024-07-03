@@ -1,5 +1,4 @@
 import { InjectEnvironmentInfo } from "@/factory/base";
-import { Monitor } from "src/runtime";
 
 export function createResourceErrorLogger(params: {
     file_url: string,

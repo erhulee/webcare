@@ -15,6 +15,8 @@ export default defineConfig({
   // 指定构建预设配置
   buildPreset: "npm-library",
   buildConfig: {
+    buildType: 'bundle',
+    input: ['package/browser/index.ts'],
     format: "esm",
     splitting: true,
     autoExternal: {

@@ -1,8 +1,8 @@
-import { Monitor } from "src/runtime";
-import { Plugin } from "../../types/plugin";
-import { connect } from "src/runtime/connect";
-import createJSErrorLogger from "src/factory/jserror";
-import createPromiseLogger from "src/factory/unhandled_promise";
+import { Monitor } from "@/runtime";
+import { Plugin } from "@/types/plugin";
+import { connect } from "@/runtime/connect";
+import createJSErrorLogger from "@/factory/jserror";
+import createPromiseLogger from "@/factory/unhandled_promise";
 import { GLOBAL_METHOD } from "@/runtime/global";
 import { set } from "lodash-es";
 

@@ -1,9 +1,10 @@
 import { Plugin } from "../types/plugin"
 import { AnyFunc, AnyObject } from "../types/other"
-import { Sender } from "src/types/sender";
-import { Options } from "src/types/options";
+import { Sender } from "@/types/sender";
+import { Options } from "@/types/options";
 import { GLOBAL_METHOD } from "./global";
 import { generateCanvasDeviceID, generateSessionID } from "@/utils/device";
+import { LoggerFilter } from "./logger-filter";
 export class Monitor {
     private plugins: Plugin[] = [];
     public deviceID: string = generateCanvasDeviceID();

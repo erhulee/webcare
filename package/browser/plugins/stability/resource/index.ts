@@ -1,7 +1,7 @@
-import { Monitor } from "src/runtime";
-import { connect } from "src/runtime/connect";
-import { AnyFunc } from "src/types/other";
-import { Plugin } from "src/types/plugin";
+import { Monitor } from "@/runtime";
+import { connect } from "@/runtime/connect";
+import { AnyFunc } from "@/types/other";
+import { Plugin } from "@/types/plugin";
 import { isCORS, isFail } from "./is";
 import { createResourceErrorLogger, createResourcePerformanceLogger } from "./report";
 

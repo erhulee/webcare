@@ -4,7 +4,7 @@ import babel from "rollup-plugin-babel";
 import alias from "@rollup/plugin-alias";
 import npm from "rollup-plugin-node-resolve";
 export default {
-  input: "src/index.ts",
+  input: "package/browser/index.ts",
   output: [
     {
       file: "dist/index.js",
@@ -24,6 +24,6 @@ export default {
     babel({
       exclude: "node_modules/**",
     }),
-    // terser()
+    terser(),
   ],
 };

@@ -1,10 +1,10 @@
 
-import { Monitor } from "src/runtime";
-import { Plugin } from "../../types/plugin";
-import { connect } from "src/runtime/connect";
-import buildQuery from "src/utils/buildQuery";
-import { get, set } from "lodash-es";
+import { Monitor } from "@/runtime";
+import { Plugin } from "@/types/plugin";
+import { connect } from "@/runtime/connect";
+import buildQuery from "@/utils/buildQuery";
 import { createHTTPErrorLogger, createHTTPSlowLogger } from "@/factory/http";
+import { get, set } from "lodash-es";
 
 function isStatusOk(status: number) {
     return status >= 200 && status < 300

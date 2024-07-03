@@ -1,8 +1,8 @@
-import { Monitor } from "src/runtime";
-import { connect } from "src/runtime/connect";
-import { SniperLog } from "src/types/log";
-import { HTTPMethod } from "src/types/other";
-import { Sender } from "src/types/sender";
+import { Monitor } from "@/runtime";
+import { connect } from "@/runtime/connect";
+import { SniperLog } from "@/types/log";
+import { HTTPMethod } from "@/types/other";
+import { Sender } from "@/types/sender";
 
 @connect
 class XHRSender implements Sender {

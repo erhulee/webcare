@@ -1,4 +1,4 @@
-import { Monitor } from "./src/runtime";
+import { Monitor } from "./runtime";
 
 declare global {
     interface Window {

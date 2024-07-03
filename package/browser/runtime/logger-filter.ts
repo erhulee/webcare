@@ -3,7 +3,7 @@ interface LoggerFilterInput {
     type: string,
     detail: unknown
 }
-class LoggerFilter {
+export class LoggerFilter {
     private _set: Set<string> = new Set();
     private timer: NodeJS.Timeout | null = null
     constructor() {

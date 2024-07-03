@@ -1,4 +1,4 @@
-import { Monitor } from "src/runtime"
+import { Monitor } from "@/runtime"
 import { InjectEnvironmentInfo } from "./base"
 
 export default function createPromiseLogger(params: {}, monitor?: Monitor) {
