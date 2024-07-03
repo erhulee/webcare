@@ -1,5 +1,11 @@
 # sniper
 
+## 1.1.1
+
+### Patch Changes
+
+- 日志发送前按照 1s 内重复发送将会去重
+
 ## 1.1.0
 
 ### Minor Changes
