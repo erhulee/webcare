@@ -2,7 +2,7 @@ import JsErrorPlugin from "./stability/jserror";
 import HTTPPlugin from "./stability/http";
 import ResourcePlugin from "./stability/resource";
 import { RecordPlugin } from "./stability/record";
-import { FPPlugin, CLSPlugin, DOMMutationPlugin, FCPPlugin, WebVitalsPlugin, TimingPlugin } from "./performance/index"
+import { FPPlugin, CLSPlugin, DOMMutationPlugin, FCPPlugin, WebVitalsPlugin, TimingPlugin, LongTaskPlugin } from "./performance/index"
 import { PVPlugin } from "./behavior/pv"
 export {
     JsErrorPlugin,
@@ -15,5 +15,6 @@ export {
     WebVitalsPlugin,
     RecordPlugin,
     PVPlugin,
-    TimingPlugin
+    TimingPlugin,
+    LongTaskPlugin
 }

@@ -12,5 +12,8 @@ export enum LoggerType {
     JS_ERROR = "js_error",
     UNHANDLED_PROMISE = 'unhandled_promise',
     PV = "pv",
-    WEB_VITAL = "web_vital"
+    WEB_VITAL = "web_vital",
+    Inner = "inner",
+    LONG_TIME_TASK = "long_time_task"
+
 }
