@@ -1,5 +1,11 @@
 # sniper
 
+## 1.2.0
+
+### Minor Changes
+
+- 支持长任务监控
+
 ## 1.1.1
 
 ### Patch Changes
