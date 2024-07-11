@@ -1,5 +1,11 @@
 # sniper
 
+## 1.2.1
+
+### Patch Changes
+
+- 修复网络请求测速多发的问题
+
 ## 1.2.0
 
 ### Minor Changes
