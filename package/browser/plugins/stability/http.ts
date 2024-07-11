@@ -123,7 +123,7 @@ export default class HTTPPlugin implements Plugin {
                         status_text
                     })
                     monitor.send(logger)
-                } else if (plugin.slow_request && request_time > plugin.slow_request) {
+                } else if (this.readyState == 4 && plugin.slow_request && request_time > plugin.slow_request) {
                     const logger = createHTTPSlowLogger({
                         url: url,
                         query: query,
