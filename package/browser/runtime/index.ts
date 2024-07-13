@@ -1,4 +1,4 @@
-import { Plugin } from "../types/plugin"
+import { GLOBAL_EVENT, Plugin } from "../types/plugin"
 import { AnyFunc, AnyObject } from "../types/other"
 import { Sender } from "@/types/sender";
 import { Options } from "@/types/options";
@@ -10,7 +10,6 @@ export class Monitor {
     public deviceID: string = generateCanvasDeviceID();
     public sessionID: string = generateSessionID();
 
-    private event_bus: Map<string, AnyFunc[]> = new Map();
     // 对外隐藏
     private sender!: Sender
     private loggerFilter: LoggerFilter = new LoggerFilter()
@@ -74,6 +73,13 @@ export class Monitor {
         } else {
             return target_plugins[0].globalMethod?.[eventName](...args)
         }
+    }
+    trigger(event: GLOBAL_EVENT, data?: any) {
+        this.plugins.forEach(plugin => {
+            if (typeof plugin.listen?.[event] == "function") {
+                plugin.listen[event](data)
+            }
+        })
     }
     use(sender: Sender): void;
     use(plugins: Plugin[]): void;

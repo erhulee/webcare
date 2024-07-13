@@ -1,9 +1,10 @@
 import { Monitor } from "@/runtime";
 import { connect } from "@/runtime/connect";
 import { AnyFunc } from "@/types/other";
-import { Plugin } from "@/types/plugin";
+import { GLOBAL_EVENT, Plugin } from "@/types/plugin";
 import { isCORS, isFail } from "./is";
-import { createResourceErrorLogger, createResourcePerformanceLogger } from "./report";
+import { createHTTPPerformanceLogger, createResourceErrorLogger, createResourcePerformanceLogger } from "./report";
+import { createHTTPErrorLogger } from "@/factory/http";
 
 @connect
 class ResourcePlugin implements Plugin {
@@ -21,11 +22,20 @@ class ResourcePlugin implements Plugin {
              */
 
             const walk = (entry: PerformanceResourceTiming) => {
-                console.log("from resource plugin:", entry)
                 switch (entry.initiatorType) {
                     case "beacon":
+                        break;
                     case "fetch":
+                        console.log("[debug] fetch performance:", entry)
                     case "xmlhttprequest":
+                        console.log("[debug] http performance:", entry)
+                        // const redirect = entry.redirectEnd - entry.redirectStart;
+                        // const cache = entry.domainLookupStart - entry.fetchStart;
+                        // const dns = entry.domainLookupEnd - entry.domainLookupStart;
+                        // const tcp = entry.connectEnd - entry.connectStart;
+                        // const transferTime = entry.responseEnd - entry.responseStart;
+                        // const transferSize = entry.transferSize;
+                        this.monitor.trigger(GLOBAL_EVENT.NET_PERFORMANCE, entry)
                         break;
                     case "script":
                     case "link":

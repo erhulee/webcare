@@ -1,5 +1,11 @@
 # sniper
 
+## 1.2.2
+
+### Patch Changes
+
+- 网络性能优化+xhr sender 批量发送
+
 ## 1.2.1
 
 ### Patch Changes

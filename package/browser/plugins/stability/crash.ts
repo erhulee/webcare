@@ -118,13 +118,6 @@ class CrashPlugin implements Plugin {
     unload() {
 
     }
-    events() {
-        return {
-            rrweb: (event: any) => {
-
-            }
-        }
-    }
 }
 
 export default CrashPlugin

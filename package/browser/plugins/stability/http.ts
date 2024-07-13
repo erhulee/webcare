@@ -1,10 +1,11 @@
 
 import { Monitor } from "@/runtime";
-import { Plugin } from "@/types/plugin";
+import { GLOBAL_EVENT, Plugin } from "@/types/plugin";
 import { connect } from "@/runtime/connect";
 import buildQuery from "@/utils/buildQuery";
 import { createHTTPErrorLogger, createHTTPSlowLogger } from "@/factory/http";
 import { get, set } from "lodash-es";
+import { createHTTPPerformanceLogger } from "./resource/report";
 
 function isStatusOk(status: number) {
     return status >= 200 && status < 300
@@ -46,6 +47,7 @@ type ExcludeRule = Array<{
 @connect
 export default class HTTPPlugin implements Plugin {
     monitor!: Monitor;
+    record: Map<string, ReturnType<typeof createXHRContext>> = new Map();
     nativeXHRSend?: any
     nativeFetch?: any
     slow_request?: number
@@ -64,6 +66,36 @@ export default class HTTPPlugin implements Plugin {
         this.slow_request = options?.slow_request
         this.exclude_rule = options?.exclude
     }
+    listen = {
+        [GLOBAL_EVENT.NET_PERFORMANCE]: (entry: PerformanceResourceTiming) => {
+            const metrics = {
+                connectEnd: entry.connectEnd,
+                connectStart: entry.connectStart,
+                decodedBodySize: entry.decodedBodySize,
+                domainLookupEnd: entry.domainLookupEnd,
+                domainLookupStart: entry.domainLookupStart,
+                encodedBodySize: entry.encodedBodySize,
+                fetchStart: entry.fetchStart,
+                redirectEnd: entry.redirectEnd,
+                redirectStart: entry.redirectStart,
+                requestStart: entry.requestStart,
+                responseEnd: entry.responseEnd,
+                responseStart: entry.responseStart,
+                secureConnectionStart: entry.secureConnectionStart,
+                transferSize: entry.transferSize,
+            }
+
+            const context = this.record.get(entry.name);
+            console.log("[debug] 监听到有 网络请求性能监控事件:", metrics, context)
+            const logger = createHTTPPerformanceLogger({
+                url: entry.name,
+                body: context?.body!,
+                method: context?.method!,
+                ...metrics
+            })
+            this.monitor.send(logger)
+        }
+    }
     run() {
         /* xhr 劫持 */
         // TODO: 目前有个缺陷, 如果 open 阶段就失败了，会监听失败(502)
@@ -75,8 +107,6 @@ export default class HTTPPlugin implements Plugin {
             ctx.method = args[0];
             ctx.url = args[1];
             const callback: (this: any) => void = function () {
-                const url = this.responseURL;
-                // const query = buildQuery(url);
                 if (ctx.url == monitor.endpoint || ctx.done) return;
                 if (this.readyState == 4 && !isStatusOk(this.status)) {
                     // 报错
@@ -91,7 +121,6 @@ export default class HTTPPlugin implements Plugin {
                         status: status,
                         status_text: status_text
                     })
-                    // const logger = new HTTPErrorLogger(code, url, HttpMethods.POST)
                     monitor.send(logger)
                     ctx.done = true
                 }
@@ -123,7 +152,16 @@ export default class HTTPPlugin implements Plugin {
                         status_text
                     })
                     monitor.send(logger)
-                } else if (this.readyState == 4 && plugin.slow_request && request_time > plugin.slow_request) {
+                }
+                plugin.record.set(url, ctx)
+                /**
+                 * 1. 优先走 performance
+                 *    发现 performance API 拿不到 body / method 信息
+                 * 2. 兜底再走手工测速
+                 */
+                if (window.performance) {
+                    // 请看 resource plugin
+                } else {
                     const logger = createHTTPSlowLogger({
                         url: url,
                         query: query,
