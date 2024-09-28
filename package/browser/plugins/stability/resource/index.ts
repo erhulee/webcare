@@ -63,7 +63,7 @@ class ResourcePlugin implements Plugin {
                             )
                         }
                     default:
-                        console.log("from resource plugin:", entry)
+                    // console.log("from resource plugin:", entry)
                 }
             }
             const preEntries = performance.getEntriesByType('resource');

@@ -15,5 +15,4 @@ export enum LoggerType {
     WEB_VITAL = "web_vital",
     Inner = "inner",
     LONG_TIME_TASK = "long_time_task"
-
 }

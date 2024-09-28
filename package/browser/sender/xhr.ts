@@ -1,8 +1,26 @@
+import { CommonTrack } from "@/common_track/type";
+import { LoggerCategory, LoggerType } from "@/factory/constant";
 import { Monitor } from "@/runtime";
 import { connect } from "@/runtime/connect";
 import { SniperLog } from "@/types/log";
 import { HTTPMethod } from "@/types/other";
 import { Sender } from "@/types/sender";
+type OriginLog = {
+    category: string;
+    type: string;
+    detail: Record<string, any>
+    timestamp: number;
+    pathname: string;
+    query: string;
+    ua: string;
+    href: string;
+    deviceID: string;
+    sessionID: string;
+    appid: string;
+    extra?: {
+
+    }
+}
 
 @connect
 class XHRSender implements Sender {
@@ -20,8 +38,24 @@ class XHRSender implements Sender {
             this.schedule()
         }, 1000)
     }
-    send(log: SniperLog) {
-        this.buffer.push(log)
+    send(log: OriginLog) {
+        const { timestamp, pathname, query, ua } = log;
+        let _log: CommonTrack = {
+            $event: `${log.category}_${log.type}`,
+            $timestamp: timestamp,
+            $pathname: pathname,
+            $query: query,
+            $ua: ua
+        };
+        Object.assign(_log, log.detail);
+        Object.assign(_log, log.extra);
+        Object.assign(_log, {
+            $appid: log.appid,
+            $deviceID: log.deviceID,
+            $sessionID: log.sessionID,
+            $href: log.href,
+        })
+        this.buffer.push(_log)
     }
 
     schedule() {
